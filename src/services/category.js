@@ -14,4 +14,9 @@ async function getOneCategory(id){
     console.log(response)
 }
 
-export{getAllCategories, getOneCategory}
+async function getOneSubcategory(scategoryId) {
+  const response = await api.get(`/category/subcategory/${scategoryId}`)
+  return response.data
+}
+
+export{getAllCategories, getOneCategory, getOneSubcategory}

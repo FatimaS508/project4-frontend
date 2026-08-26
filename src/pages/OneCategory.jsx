@@ -28,7 +28,9 @@ function OneCategory() {
         {sCategory.subcategories.map((one)=>(<div key={one._id} className='sCategory'>
             <h3>{one.name}</h3>
             <p>{one.about}</p>
-            <button onClick={() => navigate("/request")}>Request</button>
+            <button onClick={() => navigate(`/request/${one._id}`)}>Request</button>
+            {console.log("Category ID:", sCategory._id)}
+{console.log("Subcategory ID:", one._id)}
         </div>))}
         
         </>)}
