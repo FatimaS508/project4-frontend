@@ -8,6 +8,11 @@ import Dashboard from "./pages/Dashboard";
 import OneCategory from "./pages/oneCategory";
 import RequestSupport from "./pages/RequestSupport";
 import AllRequests from "./pages/AllRequests";
+
+import DashboardTechnician from "./pages/DashboardTechnician";
+import RequestsTechnician from "./pages/RequestsTechnician";
+import ReplyTechnician from "./pages/ReplyTechnician";
+
 import { useEffect } from "react";
 import { getCurrentUser, logout } from "./services/authService";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -22,10 +27,23 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/sign-up" element={<SignupPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/category/:categoryId" element={<ProtectedRoute><OneCategory /></ProtectedRoute>}/>
-        <Route path="/request/:subcategoryId" element={<ProtectedRoute><RequestSupport/></ProtectedRoute>}></Route>
-        <Route path="/requests" element={<ProtectedRoute><AllRequests /></ProtectedRoute>}/>
+
+        {user?.role === "employee" && (
+          <>
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/category/:categoryId" element={<ProtectedRoute><OneCategory /></ProtectedRoute>} />
+            <Route path="/request/:subcategoryId" element={<ProtectedRoute><RequestSupport /></ProtectedRoute>}></Route>
+            <Route path="/requests" element={<ProtectedRoute><AllRequests /></ProtectedRoute>} />
+          </>)}
+        {user?.role === "technician" && (
+          <>
+            <Route path="/dashboard2" element={<ProtectedRoute><DashboardTechnician/></ProtectedRoute>}/>
+            <Route path="/requests2" element={<ProtectedRoute><RequestsTechnician/></ProtectedRoute>}/>
+            <Route path="/requests2/:requestId" element={<ProtectedRoute><ReplyTechnician/></ProtectedRoute>}/>
+
+
+          </>
+        )}
       </Routes>
     </div>
   );
