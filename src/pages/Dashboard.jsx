@@ -7,7 +7,7 @@ function Dashboard({ }) {
   const {user} = useAuth()
   const [category, setCategory]= useState([])
 
-   
+   console.log(user)
     async function loadAllCategories(){
       try{
         const response= await getAllCategories()

@@ -9,6 +9,7 @@ function Signup() {
     username: "",
     password: "",
     passwordConf: "",
+    role: "employee"
   });
   const [ submitting, setSubmitting ] = useState(false)
 
@@ -52,6 +53,31 @@ function Signup() {
             onChange={handleChange}
             required
           />
+        </div>
+        <div>
+          <p>Select your role:</p>
+
+          <label>
+            <input
+              type="radio"
+              name="role"
+              value="employee"
+              checked={formData.role === "employee"}
+              onChange={handleChange}
+            />
+            Employee
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="role"
+              value="technician"
+              checked={formData.role === "technician"}
+              onChange={handleChange}
+            />
+            Technician
+          </label>
         </div>
         <div>
           <label htmlFor="password">Password:</label>
