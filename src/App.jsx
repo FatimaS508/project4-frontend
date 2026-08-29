@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 function App() {
+  const { user } = useAuth();
   return (
     <div>
       <Navbar/>
@@ -38,7 +39,7 @@ function App() {
         {user?.role === "technician" && (
           <>
             <Route path="/dashboard2" element={<ProtectedRoute><DashboardTechnician/></ProtectedRoute>}/>
-            <Route path="/requests2" element={<ProtectedRoute><RequestsTechnician/></ProtectedRoute>}/>
+            <Route path="/requests2/subcategory/:subcategoryId" element={<ProtectedRoute><RequestsTechnician/></ProtectedRoute>}/>
             <Route path="/requests2/:requestId" element={<ProtectedRoute><ReplyTechnician/></ProtectedRoute>}/>
 
 

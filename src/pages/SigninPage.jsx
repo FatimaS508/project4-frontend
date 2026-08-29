@@ -32,7 +32,12 @@ const SignInForm = ({}) => {
       const signedInUser = await signIn(formData);
 
       setUser(signedInUser);
-      navigate('/dashboard');
+      if (signedInUser.role === "technician") {
+        navigate("/dashboard2");
+      } else {
+        navigate("/dashboard");
+      }
+      //navigate('/dashboard');
     } catch (err) {
       console.log(`Error: ${err}`)
       setError(err?.response?.data?.message);
