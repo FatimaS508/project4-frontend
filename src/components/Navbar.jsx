@@ -9,11 +9,13 @@ function Navbar() {
         <>
           <button onClick={logout}>Sign Out</button>
 
-          {user.role === "employee" && (
+          {user.role === "employee" ? (
             <>
-              <Link to="/dashboard">Support</Link>
+              <Link to="/dashboard">SUPPORT | دعم</Link>
               <Link to="/requests">All Requests</Link>
             </>
+          ) : (
+            <Link to="/dashboard2">SUPPORT | دعم</Link>
           )}
         </>
       ) : (

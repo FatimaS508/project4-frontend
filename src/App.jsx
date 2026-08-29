@@ -14,6 +14,7 @@ import OneRequest from "./pages/OneRequest";
 import DashboardTechnician from "./pages/DashboardTechnician";
 import RequestsTechnician from "./pages/RequestsTechnician";
 import ReplyTechnician from "./pages/ReplyTechnician";
+import ResolvedRequests from "./pages/ResolvedRequests";
 
 import { useEffect } from "react";
 import { getCurrentUser, logout } from "./services/authService";
@@ -44,6 +45,8 @@ function App() {
             <Route path="/dashboard2" element={<ProtectedRoute><DashboardTechnician/></ProtectedRoute>}/>
             <Route path="/requests2/subcategory/:subcategoryId" element={<ProtectedRoute><RequestsTechnician/></ProtectedRoute>}/>
             <Route path="/requests2/:requestId" element={<ProtectedRoute><ReplyTechnician/></ProtectedRoute>}/>
+            <Route path="/requests2/resolved" element={<ProtectedRoute><ResolvedRequests/></ProtectedRoute>}/>
+
 
 
           </>

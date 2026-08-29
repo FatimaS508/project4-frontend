@@ -75,7 +75,7 @@ function DashboardTechnician() {
 
         <div className="summary-card">
           <h2>Resolved</h2>
-          <p>{resolvedRequests.length} requests</p>
+          <Link to="/requests2/resolved">{resolvedRequests.length} requests</Link>
         </div>
       </section>
 
@@ -102,6 +102,7 @@ function DashboardTechnician() {
           )
         )}
       </section>
+      
 
       {newRequests.length === 0 && (
         <p>There are no new requests.</p>
