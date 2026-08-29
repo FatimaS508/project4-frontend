@@ -107,6 +107,10 @@ function ReplyTechnician() {
   if (error) {
     return <p>{error}</p>;
   }
+  const subcategory = request.category.subcategories.find(
+    (subcategory) =>
+      subcategory._id.toString() ===
+      request.subcategoryId.toString())
 
   return (
     <div>
@@ -142,17 +146,18 @@ function ReplyTechnician() {
 
           <p>
             <strong>Status:</strong>{" "}
-            {request.Status}
+            {request.status}
           </p>
 
-          {Object.entries(request.requestDetails || {}).map(
-            ([field, value]) => (
-              <p key={field}>
-                <strong>{field}:</strong>{" "}
-                {String(value)}
-              </p>
-            )
-          )}
+            {Object.entries(request.requestDetails).map(([name, value]) => {
+              const field = subcategory.formFields.find(
+                (field) => field.name === name
+              );
+
+              return (
+                <p key={name}>
+                  <strong>{field.label}:</strong> {value}
+                </p>)})}
 
           {request.attachments?.length > 0 && (
             <div>

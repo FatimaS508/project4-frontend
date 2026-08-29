@@ -73,6 +73,11 @@ function OneRequest() {
   if (!request) {
     return <p>Request not found.</p>;
   }
+  const subcategory = request.category.subcategories.find(
+  (subcategory) =>
+    subcategory._id.toString() ===
+    request.subcategoryId.toString()
+)
 
   return (
     <div>
@@ -90,13 +95,15 @@ function OneRequest() {
           <strong>Status:</strong> {request.status}
         </p>
 
-        {Object.entries(request.requestDetails || {}).map(
-          ([name, value]) => (
-            <p key={name}>
-              <strong>{name}:</strong> {value}
-            </p>
-          )
-        )}
+              {Object.entries(request.requestDetails).map(([name, value]) => {
+                  const field = subcategory.formFields.find(
+                      (field) => field.name === name
+                  )
+                  return (
+                      <p key={name}>
+                          <strong>{field.label}:</strong> {value}
+                      </p>
+                  )})}
       </section>
 
       

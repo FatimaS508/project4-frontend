@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { getAllRequests } from "../services/requests"
 
 function ResolvedRequests() {
-  const [requests, setRequests] = useState([])
+    const [requests, setRequests] = useState([])
     async function loadRequests() {
         try {
             const response = await getAllRequests()
@@ -11,63 +11,53 @@ function ResolvedRequests() {
             console.log(err)
         }
     }
-  useEffect(() => {
-    loadRequests()
-  }, [])
+    useEffect(() => {
+        loadRequests()
+    }, [])
 
-  const resolvedRequests = requests.filter(
-    (request) => request.status === "Resolved")
+    const resolvedRequests = requests.filter(
+        (request) => request.status === "Resolved")
 
-  return (
-    <div>
-      <h1>Resolved Requests</h1>
+    return (
+        <div>
+            <h1>Resolved Requests</h1>
 
-      {resolvedRequests.map((request) => {
-        const finalReply =
-          request.replies?.[request.replies.length - 1]
+            {resolvedRequests.map((request) => {
+                const subcategory = request.category?.subcategories?.find(
+                    (subcategory) =>
+                        subcategory._id.toString() === request.subcategoryId.toString()
+                )
+                const finalReply = request.replies?.[request.replies.length - 1];
 
-        return (
-          <details key={request._id}>
-            <summary>{request.title} — {request.priority}</summary>
+                return (
+                    <details key={request._id}>
+                        <summary>
+                            {request.title} — {request.priority}
+                        </summary>
 
-            <p>
-              <strong>Status:</strong> {request.status}
-            </p>
+                        <h3>Request information</h3>
 
-            <p>
-              <strong>Employee:</strong>{" "}
-              {request.createdBy?.username || "Unknown"}
-            </p>
+                        {Object.entries(request.requestDetails).map(([name, value]) => {
+                            const field = subcategory.formFields.find(
+                                (field) => field.name === name
+                            )
 
-            <p>
-              <strong>Category:</strong>{" "}
-              {request.category?.name || "Other"}
-            </p>
+                            return (
+                                <p key={name}>
+                                    <strong>{field.label}:</strong> {value}
+                                </p>
+                                )})}
+                        <h3>Technician Final Message</h3>
 
-            <h3>Request information</h3>
+                        <p>{finalReply?.message || "No reply available"}</p>
+                    </details>)
+            })}
 
-            {Object.entries(request.requestDetails || {}).map(
-              ([name, value]) => (
-                <p key={name}>
-                  <strong>{name}:</strong> {value}
-                </p>
-              )
+            {resolvedRequests.length === 0 && (
+                <p>There are no resolved requests.</p>
             )}
-
-            <h3>Technician Final message: </h3>
-
-            <p>
-              {finalReply?.message || "No reply available"}
-            </p>
-          </details>
-        );
-      })}
-
-      {resolvedRequests.length === 0 && (
-        <p>There are no resolved requests.</p>
-      )}
-    </div>
-  );
+        </div>
+    );
 }
 
 export default ResolvedRequests;
