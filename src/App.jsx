@@ -4,10 +4,12 @@ import Navbar from "./components/Navbar";
 import SignupPage from "./pages/SignupPage";
 import Homepage from "./pages/Homepage";
 import SignInPage from "./pages/SigninPage";
+
 import Dashboard from "./pages/Dashboard";
 import OneCategory from "./pages/oneCategory";
 import RequestSupport from "./pages/RequestSupport";
 import AllRequests from "./pages/AllRequests";
+import OneRequest from "./pages/OneRequest";
 
 import DashboardTechnician from "./pages/DashboardTechnician";
 import RequestsTechnician from "./pages/RequestsTechnician";
@@ -35,6 +37,7 @@ function App() {
             <Route path="/category/:categoryId" element={<ProtectedRoute><OneCategory /></ProtectedRoute>} />
             <Route path="/request/:subcategoryId" element={<ProtectedRoute><RequestSupport /></ProtectedRoute>}></Route>
             <Route path="/requests" element={<ProtectedRoute><AllRequests /></ProtectedRoute>} />
+            <Route path="/requests/:requestId" element={<ProtectedRoute><OneRequest /></ProtectedRoute>} />
           </>)}
         {user?.role === "technician" && (
           <>

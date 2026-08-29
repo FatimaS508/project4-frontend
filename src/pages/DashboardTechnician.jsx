@@ -23,12 +23,12 @@ function DashboardTechnician() {
   }, []);
 
   const newRequests = requests.filter(
-    (request) => request.Status === "New"
+    (request) => request.status === "New"
   );
 
   const resolvedRequests = requests.filter(
-    (request) => request.Status === "Resolved"
-  );
+    (request) => request.status === "Resolved"
+  )
 
   const groupedRequests = {};
 

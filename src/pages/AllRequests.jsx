@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { getAllRequests } from "../services/requests";
 
 function AllRequests() {
   const [requests, setRequests] = useState([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
-  const filteredRequests= requests.filter(R=> R.title?.toLowerCase().includes(search.toLowerCase()))
+  const filteredRequests = requests.filter((request) =>
+    request.title?.toLowerCase().includes(search.toLowerCase())
+  );
 
   useEffect(() => {
     async function loadRequests() {
@@ -22,26 +25,29 @@ function AllRequests() {
 
   return (
     <div>
-      
-    <input
-      type="text"
-      placeholder="Search for support Request"
-      value={search}
-      onChange={e => setSearch(e.target.value)}
-    />
       <h1>All Requests</h1>
 
-          {filteredRequests.map((request) => (
-              <div key={request._id}>
-                  <h2>{request.title}</h2>
+      <input
+        type="text"
+        placeholder="Search support requests"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
-                  <p>Priority: {request.priority}</p>
-                  <p>Status: {request.Status}</p>
-                  <p>Details</p>
+      {filteredRequests.map((request) => (
+        <div key={request._id}>
+          <h2>{request.title}</h2>
 
-                  {Object.entries(request.requestDetails).map(([name, value]) => (
-                      <p key={name}> {name}: {value}</p> 
-                      ))} </div>))}
+          <p>Priority: {request.priority}</p>
+          <p>Status: {request.status}</p>
+
+          <Link to={`/requests/${request._id}`}>
+            View Request
+          </Link>
+        </div>
+      ))}
+
+      {filteredRequests.length === 0 && <p>No requests found.</p>}
     </div>
   );
 }
