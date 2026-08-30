@@ -38,7 +38,7 @@ function OneRequest() {
       const updatedRequest = await updateRequestStatus(requestId,"Resolved")
 
       setRequest(updatedRequest)
-      toast.success("Issue resolved successfully")
+      toast.success("Issue resolved successfully",{duration: 4000})
     } catch (err) {
       console.log(err.response?.data || err.message)
       toast.error("Could not update the request")
@@ -55,10 +55,10 @@ function OneRequest() {
 
       const response = await addReply(requestId, { message: comment,})
 
-      setRequest((currentRequest) => ({...currentRequest,status: "In progress",replies: response.replies,}))
+      setRequest((currentRequest) => ({...currentRequest,status: "In progress",replies: response.request.replies}))
       setComment("")
       setShowComment(false)
-      toast.success("Your comment was sent to the technician")
+      toast.success("Your message was sent. Please wait for the technician's reply.",{duration: 4000})
     } catch (err) {
       console.log(err)
       toast.error("Could not send your comment");

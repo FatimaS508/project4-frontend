@@ -1,35 +1,45 @@
-import React from 'react'
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
-import toast from "react-hot-toast";
-import { useAuth } from "../context/AuthContext";
-import {getOneRequest,addReply, deleteReply} from "../services/requests";
+import { useEffect, useState } from "react"
+import { Link, useParams } from "react-router"
+import toast from "react-hot-toast"
+
+import { useAuth } from "../context/AuthContext"
+import {
+  getOneRequest,
+  addReply,
+  deleteReply
+} from "../services/requests"
+
 
 function ReplyTechnician() {
   const { requestId } = useParams()
   const { user } = useAuth()
+
   const [request, setRequest] = useState(null)
 
   const [formData, setFormData] = useState({
-    message: "",
-    attachmentUrl: "",
-    fileType: "image"
+    message: ""
   })
-  const [loading, setLoading] = useState(true);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
-async function loadRequest() {
-      try {
-        const response = await getOneRequest(requestId)
 
-        setRequest(response.request ?? response)
-      } catch (err) {
-        console.log(err);
-        setError("Failed to load request")
-      } finally {
-        setLoading(false);
-      }
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
+  const [deletingReplyId, setDeletingReplyId] = useState(null)
+  const [error, setError] = useState("")
+
+  async function loadRequest() {
+    try {
+      setError("")
+
+      const response = await getOneRequest(requestId)
+
+      setRequest(response.request ?? response)
+    } catch (err) {
+      console.log(err)
+      setError("Failed to load request")
+    } finally {
+      setLoading(false)
     }
+  }
+
   useEffect(() => {
     loadRequest()
   }, [requestId])
@@ -38,211 +48,275 @@ async function loadRequest() {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value
-    });
+    })
   }
-  async function handleDeleteReply(replyId) {
-  const confirmed = window.confirm(
-    "Are you sure you want to delete this reply?"
-  );
 
-  if (!confirmed) return
+async function handleSubmit(event) {
+  event.preventDefault()
+
+  if (!formData.message.trim()) {
+    toast.error("Please enter a message")
+    return
+  }
+
   try {
-    await deleteReply(requestId, replyId)
-    await loadRequest()
+    setSending(true)
 
-    toast.success("Reply deleted successfully")
+    const response = await addReply(requestId, {
+      message: formData.message.trim()
+    })
+
+    setRequest(response.request)
+
+    setFormData({message: ""
+    })
+
+    toast.success("Reply added successfully",{duration: 4000})
   } catch (err) {
     console.log(err)
-    toast.error( "Failed to delete reply")}}
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+    toast.error(
+      err.response?.data?.message || "Failed to add reply"
+    )
+  } finally {
+    setSending(false)
+  }
+}
 
-    if (!formData.message.trim()) {
-      toast.error("Please enter a message");
-      return;
-    }
+  async function handleDeleteReply(replyId) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this reply?"
+    )
 
-    const attachments = [];
-
-    if (formData.attachmentUrl.trim()) {
-      attachments.push({
-        url: formData.attachmentUrl.trim(),
-        fileType: formData.fileType,
-        fileName:
-          formData.attachmentUrl.split("/").pop() || "Attachment"})}
-    const replyData = {
-      message: formData.message.trim(),
-      attachments
-    }
+    if (!confirmed) return
 
     try {
-      setSending(true)
+      setDeletingReplyId(replyId)
 
-      const response = await addReply(
-        requestId,
-        replyData
-      );
+      await deleteReply(requestId, replyId)
+      await loadRequest()
 
-      
-      setRequest(response.request);
-
-      setFormData({
-        message: "",
-        attachmentUrl: "",
-        fileType: "image"
-      });
-
-      toast.success("Reply added successfully");
+      toast.success("Reply deleted successfully",{duration: 4000})
     } catch (err) {
-      console.log(err);
-
-      toast.error(
-        err?.response?.data?.message ||
-          "Failed to add reply"
-      );
+      console.log(err)
+      toast.error("Failed to delete reply")
     } finally {
-      setSending(false);
+      setDeletingReplyId(null)
     }
+  }
+
+  function displayValue(value) {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return "Not provided"
+    }
+
+    if (typeof value === "object") {
+      return (
+        value.value ||
+        value.name ||
+        "Not provided"
+      )
+    }
+
+    return value
+  }
+
+  function getAttachmentUrl(attachment) {
+    if (typeof attachment === "string") {
+      return attachment
+    }
+
+    return attachment?.url
   }
 
   if (loading) {
-    return <p>Loading request...</p>;
+    return (
+      <main className="reply-technician-page">
+        <p className="reply-page-message">
+          Loading request...
+        </p>
+      </main>
+    )
   }
 
-  if (error) {
-    return <p>{error}</p>;
+  if (error || !request) {
+    return (
+      <main className="reply-technician-page">
+        <p className="reply-page-error">
+          {error || "Request not found"}
+        </p>
+      </main>
+    )
   }
-  const subcategory = request?.category?.subcategories?.find(
-    (subcategory) =>
-      subcategory._id?.toString() ===
-      request.subcategoryId?.toString())
+
+  const subcategory =
+    request.category?.subcategories?.find(
+      (item) =>
+        item._id?.toString() ===
+        request.subcategoryId?.toString()
+    )
 
   return (
-    <div>
-      <main className="reply-page">
-      <Link
-        to={`/requests2/subcategory/${request.subcategoryId}`}
-        className="back-link"
+    <main className="reply-technician-page">
+      <a
+        href="#"
+        className="reply-back-link"
+        onClick={(event) => {
+          event.preventDefault()
+          window.history.back()
+        }}
       >
-        Back to requests
-      </Link>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
 
-      <h1>{request.title}</h1>
+        Back to Requests
+      </a>
+
+      <header className="reply-page-heading">
+        <p>Technician Workspace</p>
+
+        <h1>{request.title}</h1>
+
+        <div className="reply-heading-badges">
+          <span>{request.priority} Priority</span>
+          <strong>{request.status}</strong>
+        </div>
+      </header>
 
       <div className="reply-page-content">
-        
-        <section className="request-details">
-          <h2>Request Details</h2>
+        <section className="technician-request-details">
+          <div className="reply-section-heading">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 3h12v18H6z" />
+              <path d="M9 8h6" />
+              <path d="M9 12h6" />
+              <path d="M9 16h4" />
+            </svg>
 
-          <p>
-            <strong>Employee:</strong>{" "}
-            {request.createdBy?.username || "Unknown"}
-          </p>
+            <h2>Request Details</h2>
+          </div>
 
-          <p>
-            <strong>Category:</strong>{" "}
-            {request.category?.name || "Unknown"}
-          </p>
+          <div className="technician-details-grid">
+            <div className="technician-detail">
+              <span>Employee</span>
 
-          <p>
-            <strong>Priority:</strong>{" "}
-            {request.priority}
-          </p>
+              <strong>
+                {request.createdBy?.username || "Unknown"}
+              </strong>
+            </div>
 
-          <p>
-            <strong>Status:</strong>{" "}
-            {request.status}
-          </p>
+            <div className="technician-detail">
+              <span>Category</span>
 
-          
+              <strong>
+                {request.category?.name || "Unknown"}
+              </strong>
+            </div>
 
-            {Object.entries(request.requestDetails).map(([name, value]) => {
-              const field = subcategory?.formFields?.find(
-                (field) => field.name === name
-              );
+            <div className="technician-detail">
+              <span>Priority</span>
+              <strong>{request.priority}</strong>
+            </div>
+
+            <div className="technician-detail">
+              <span>Status</span>
+              <strong>{request.status}</strong>
+            </div>
+
+            {Object.entries( request.requestDetails || {}).map(([name, value]) => {
+              const field = subcategory?.formFields?.find((item) =>
+                    item.name === name || item.label === name
+                )
 
               return (
-                <p key={name}>
-                  <strong>{field?.label || name}:</strong> {value}
-                </p>)})}
+                <div
+                  className="technician-detail"
+                  key={name}
+                >
+                  <span>
+                    {value?.label ||
+                      field?.label ||
+                      name}
+                  </span>
+
+                  <strong>
+                    {displayValue(value)}
+                  </strong>
+                </div>
+              )
+            })}
+          </div>
 
           {request.attachments?.length > 0 && (
-            <div>
+            <div className="request-attachments">
               <h3>Request Attachments</h3>
 
-              {request.attachments.map(
-                (attachment, index) => (
-                  <a
-                    key={index}
-                    href={attachment}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View attachment {index + 1}
-                  </a>
-                )
-              )}
+              <div className="attachment-list">
+                {request.attachments.map(
+                  (attachment, index) => (
+                    <a
+                      key={
+                        attachment._id ||
+                        attachment.url ||
+                        index
+                      }
+                      href={getAttachmentUrl(attachment)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path d="m8 12 5-5a3 3 0 0 1 4 4l-7 7a5 5 0 0 1-7-7l8-8" />
+                      </svg>
+
+                      {attachment.fileName || `View attachment ${index + 1}`}
+                    </a>
+                  )
+                )}
+              </div>
             </div>
           )}
         </section>
 
-        
-        <section className="reply-form-section">
-          <h2>Technician Reply</h2>
+        <section className="technician-reply-form-section">
+          <div className="reply-section-heading">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5h16v11H8l-4 4z" />
+            </svg>
 
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="message">Message:</label>
+            <h2>Technician Reply</h2>
+          </div>
+
+          <form
+            className="technician-reply-form"
+            onSubmit={handleSubmit}
+          >
+            <div className="technician-reply-field">
+              <label htmlFor="message">
+                Message
+              </label>
 
               <textarea
                 id="message"
                 name="message"
-                rows="6"
+                rows="7"
                 value={formData.message}
+                placeholder="Write your response or solution"
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div>
-              <label htmlFor="attachmentUrl">
-                Attachment URL (optional):
-              </label>
-
-              <input
-                id="attachmentUrl"
-                name="attachmentUrl"
-                type="url"
-                value={formData.attachmentUrl}
-                onChange={handleChange}
-              />
-            </div>
-
-            {formData.attachmentUrl && (
-              <div>
-                <label htmlFor="fileType">
-                  File type:
-                </label>
-
-                <select
-                  id="fileType"
-                  name="fileType"
-                  value={formData.fileType}
-                  onChange={handleChange}
-                >
-                  <option value="image">Image</option>
-                  <option value="document">
-                    Document
-                  </option>
-                  <option value="audio">Audio</option>
-                </select>
-              </div>
-            )}
-
-            <div>
+            <div className="technician-reply-field">
               <label htmlFor="issuedBy">
-                Issued by:
+                Issued By
               </label>
 
               <input
@@ -253,63 +327,98 @@ async function loadRequest() {
               />
             </div>
 
-            <button type="submit" disabled={sending}>
-              {sending ? "Sending..." : "Send Reply"}
+            <button
+              className="send-technician-reply"
+              type="submit"
+              disabled={sending}
+            >
+              {sending? "Sending..."
+                : "Send Reply"}
+
+              {!sending && (
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="m3 11 18-8-8 18-2-8z" />
+                  <path d="m11 13 10-10" />
+                </svg>
+              )}
             </button>
           </form>
         </section>
       </div>
 
-      
-      <section className="replies-section">
-        <h2>Replies</h2>
+      <section className="technician-replies-section">
+        <div className="replies-title-row">
+          <div className="reply-section-heading">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5h16v11H8l-4 4z" />
+            </svg>
+
+            <h2>Reply History</h2>
+          </div>
+
+          <span>{request.replies?.length || 0}</span>
+        </div>
 
         {!request.replies?.length ? (
-          <p>No replies yet.</p>
+          <div className="technician-no-replies">
+            <p>No replies have been added yet.</p>
+          </div>
         ) : (
-          request.replies.map((reply) => (
-            <article
-              className="reply-card"
-              key={reply._id}
-            >
-              <p>{reply.message}</p>
+          <div className="technician-replies-list">
+            {request.replies.map((reply) => (
+              <article
+                className="technician-reply-card"
+                key={reply._id}
+              >
+                <div className="reply-card-header">
+                  <div className="reply-author">
+                    <span>
+                      {reply.sender?.username?.charAt(0)
+                        .toUpperCase() || "T"}
+                    </span>
 
-              <p>
-                <strong>Issued by:</strong>{" "}
-                {reply.sender?.username ||
-                  "Unknown technician"}
-              </p>
+                    <div>
+                      <h3>
+                        {reply.sender?.username || "Unknown technician"}
+                      </h3>
 
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(
-                  reply.createdAt
-                ).toLocaleString()}
-              </p>
+                      <p>
+                        {reply.createdAt? new Date(reply.createdAt).toLocaleString()
+                          : "Date unavailable"}
+                      </p>
+                    </div>
+                  </div>
 
-              {reply.attachments?.map((attachment) => (
-                <div
-                  key={attachment._id || attachment.url}
-                >
-                  <a
-                    href={attachment.url}
-                    target="_blank"
-                    rel="noreferrer"
+                  <button
+                    className="delete-reply-button"
+                    type="button"
+                    onClick={() =>
+                      handleDeleteReply(reply._id)
+                    }
+                    disabled={
+                      deletingReplyId === reply._id
+                    }
                   >
-                    {attachment.fileName ||
-                      "View attachment"}
-                  </a>
+                    {deletingReplyId === reply._id? "Deleting..."
+                      : "Delete"}
+                  </button>
                 </div>
-              ))}
-              <button type="button" onClick={() => handleDeleteReply(reply._id)}>
-                Delete Reply
-              </button>
-            </article>
-          ))
+
+                <p className="reply-card-message">
+                  {reply.message}
+                </p>
+
+
+                      
+              </article>
+            ))}
+          </div>
         )}
       </section>
     </main>
-    </div>
   )
 }
 
