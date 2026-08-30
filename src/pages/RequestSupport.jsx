@@ -5,163 +5,277 @@ import { createRequest } from "../services/requests";
 import toast from "react-hot-toast";
 
 function RequestSupport() {
-  const { subcategoryId } = useParams();
-  const navigate = useNavigate();
+  const { subcategoryId } = useParams()
+  const navigate = useNavigate()
 
-  const [subcategory, setSubcategory] = useState(null);
-  const [categoryId, setCategoryId] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [subcategory, setSubcategory] = useState(null)
+  const [categoryId, setCategoryId] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
 
   const [formData, setFormData] = useState({
-  priority: "Medium",
-  requestDetails: {},
-})
+    priority: "Medium",
+    requestDetails: {},
+  });
 
-async function loadSubcategory() {
-      try {
-        const response = await getOneSubcategory(subcategoryId);
+  async function loadSubcategory() {
+    try {
+      const response = await getOneSubcategory(subcategoryId)
 
-        setSubcategory(response.scategory);
-        setCategoryId(response.categoryId);
-      } catch (err) {
-        toast.error("Failed to load the subcategory");
-      } finally {
-        setLoading(false);
-      }
+      setSubcategory(response.scategory)
+      setCategoryId(response.categoryId)
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load the subcategory")
+    } finally {
+      setLoading(false)
     }
+  }
 
   useEffect(() => {
-    loadSubcategory();
-  }, [subcategoryId]);
+    loadSubcategory()
+  }, [subcategoryId])
 
   function handlePriorityChange(event) {
-    setFormData({
-      ...formData,
-      priority: event.target.value
-    });
+    setFormData((currentData) => ({
+      ...currentData,
+      priority: event.target.value,
+    }));
   }
 
   function handleFieldChange(event, fieldLabel) {
-  const { value, type, files } = event.target;
+    const { value, type, files } = event.target
 
-  setFormData({
-    ...formData,
-    requestDetails: {
-      ...formData.requestDetails,
-      [fieldLabel]: type === "file" ? files[0] : value
-    }
-  });
-}
+    setFormData((currentData) => ({...currentData,
+      requestDetails: {...currentData.requestDetails,[fieldLabel]: type === "file" ? files[0] : value,
+      },
+    }))
+  }
 
   async function handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
     try {
+      setSubmitting(true)
+
       const requestBody = {
         categoryId,
         subcategoryId,
         priority: formData.priority,
-        requestDetails: formData.requestDetails
-      };
+        requestDetails: formData.requestDetails,
+      }
 
-      await createRequest(requestBody);
+      await createRequest(requestBody)
 
-      toast.success("Request created successfully!");
-      navigate("/dashboard");
+      toast.success("Request created successfully!")
+      navigate("/dashboard")
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Failed to create the request"
-      );
+      console.log(err)
+
+      toast.error(err.response?.data?.message || "Failed to create the request")
+      setSubmitting(false)
     }
   }
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <main className="request-support-page">
+        <p className="request-page-message">
+          Loading request form...
+        </p>
+      </main>
+    );
   }
 
   if (!subcategory) {
-    return <p>Subcategory not found.</p>;
+    return (
+      <main className="request-support-page">
+        <p className="request-page-error">
+          Subcategory not found.
+        </p>
+
+        <button className="request-back-button" type="button" onClick={() => navigate("/dashboard")}>
+          Back to Dashboard
+        </button>
+      </main>
+    )
   }
 
   return (
-    <div>
-      <h1>Request Support</h1>
+    <main className="request-support-page">
+      <button
+        className="request-back-button"
+        type="button"
+        onClick={() => navigate(-1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+        Back
+      </button>
 
-      <h2>{subcategory.name}</h2>
-      <p>{subcategory.about}</p>
+      <section className="request-form-container">
+        <span className="request-form-decoration"></span>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="priority">Priority</label>
+        <header className="request-form-heading">
+          <p>New Support Request</p>
+          <h1>{subcategory.name}</h1>
 
-          <select
-            id="priority"
-            name="priority"
-            value={formData.priority}
-            onChange={handlePriorityChange}
-          >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Urgent">Urgent</option>
-          </select>
-        </div>
+          {subcategory.about && (
+            <span>{subcategory.about}</span>
+          )}
+        </header>
 
-        {subcategory.formFields.map((field) => (
-          <div key={field._id}>
-            <label htmlFor={field.label}>
-              {field.label}
-              {field.required && " *"}
+        <form
+          className="request-support-form"
+          onSubmit={handleSubmit}
+        >
+          <div className="request-field">
+            <label htmlFor="priority">
+              Priority <span className="required-mark">*</span>
             </label>
 
-            {field.type === "select" ? (
-              <select
-                id={field.name}
-                name={field.name}
-                value={formData.requestDetails[field.label] || ""}
-                onChange={(event) => handleFieldChange(event, field.label)}
-                required={field.required}
-              >
-                <option value="">Select {field.label}</option>
-
-                {field.options.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            ) : field.type === "textarea" ? (
-              <textarea
-                id={field.name}
-                name={field.name}
-                value={formData.requestDetails[field.label] || ""}
-                onChange={(event) => handleFieldChange(event, field.label)}
-                required={field.required}
-              />
-            ) : field.type === "file" ? (
-              <input
-                id={field.name}
-                name={field.name}
-                type="file"
-                onChange={(event) => handleFieldChange(event, field.label)}
-                required={field.required}
-              />
-            ) : (
-              <input
-                id={field.name}
-                name={field.name}
-                type={field.type}
-                value={formData.requestDetails[field.label] || ""}
-                onChange={(event) =>handleFieldChange(event, field.label)}
-                required={field.required}
-              />
-            )}
+            <select
+              id="priority"
+              name="priority"
+              value={formData.priority}
+              onChange={handlePriorityChange}
+              required
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Urgent">Urgent</option>
+            </select>
           </div>
-        ))}
 
-        <button type="submit">Submit Request</button>
-      </form>
-    </div>
+          {subcategory.formFields?.map((field) => (
+            <div className="request-field" key={field._id}>
+              <label htmlFor={field.name}>
+                {field.label}
+
+                {field.required && (
+                  <span className="required-mark"> *</span>
+                )}
+              </label>
+
+              {field.type === "select" ? (
+                <select
+                  id={field.name}
+                  name={field.name}
+                  value={
+                    formData.requestDetails[field.label] || ""
+                  }
+                  onChange={(event) =>
+                    handleFieldChange(event, field.label)
+                  }
+                  required={field.required}
+                >
+                  <option value="">
+                    Select {field.label}
+                  </option>
+
+                  {field.options?.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === "textarea" ? (
+                <textarea
+                  id={field.name}
+                  name={field.name}
+                  value={
+                    formData.requestDetails[field.label] || ""
+                  }
+                  placeholder={`Enter ${field.label.toLowerCase()}`}
+                  onChange={(event) =>
+                    handleFieldChange(event, field.label)
+                  }
+                  required={field.required}
+                  rows="5"
+                />
+                ) : field.type === "file" ? (
+                  <label
+                    className="file-upload-box"
+                    htmlFor={field.name}
+                  >
+                    <svg
+                      className="upload-icon"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path d="M7 18a5 5 0 0 1-.6-9.97A7 7 0 0 1 20 10a4 4 0 0 1 0 8H7Z" />
+                      <path d="m9 12 3-3 3 3" />
+                      <path d="M12 9v7" />
+                    </svg>
+
+                    <span className="upload-title">
+                      Upload an image
+                    </span>
+
+                    <span className="upload-description">
+                      Click here to select an image
+                    </span>
+
+                    <span className="selected-file-name">
+                      {formData.requestDetails[field.label]?.name ||
+                        "No image selected"}
+                    </span>
+
+                    <input
+                      className="file-upload-input"
+                      id={field.name}
+                      name={field.name}
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) =>
+                        handleFieldChange(event, field.label)
+                      }
+                      required={field.required}
+                    />
+                  </label>
+                ) : (
+                <input
+                  id={field.name}
+                  name={field.name}
+                  type={field.type}
+                  value={
+                    formData.requestDetails[field.label] || ""
+                  }
+                  placeholder={`Enter ${field.label.toLowerCase()}`}
+                  onChange={(event) =>
+                    handleFieldChange(event, field.label)
+                  }
+                  required={field.required}
+                />
+              )}
+            </div>
+          ))}
+
+          <div className="request-form-actions">
+            <button
+              className="submit-request-button"
+              type="submit"
+              disabled={submitting}
+            >
+              {submitting
+                ? "Submitting..."
+                : "Submit Request"}
+            </button>
+
+            <button
+              className="request-cancel-button"
+              type="button"
+              onClick={() => navigate(-1)}
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+    </main>
   );
 }
 

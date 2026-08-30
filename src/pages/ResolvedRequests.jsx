@@ -37,16 +37,17 @@ function ResolvedRequests() {
 
                         <h3>Request information</h3>
 
-                        {Object.entries(request.requestDetails).map(([name, value]) => {
-                            const field = subcategory.formFields.find(
-                                (field) => field.name === name
+                        {Object.entries(request.requestDetails || {}).map(([key, value]) => {
+                            const field = subcategory?.fields?.find(
+                                (field) => field.name === key
                             )
 
                             return (
-                                <p key={name}>
-                                    <strong>{field.label}:</strong> {value}
+                                <p key={key}>
+                                    <strong>{field?.label || key}:</strong> {value}
                                 </p>
-                                )})}
+                            )
+                        })}
                         <h3>Technician Final Message</h3>
 
                         <p>{finalReply?.message || "No reply available"}</p>
