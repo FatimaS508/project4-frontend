@@ -5,3 +5,504 @@
 nav a{
     margin-right: 10px
 }
+/*signup page*/
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  padding: 0;
+}
+.signup-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #ffffff;
+  color: #121212;
+}
+
+.signup-container {
+  width: 100%;
+  max-width: 550px;
+
+  background-color: #eedbbf;
+  border: 2px solid #67191f;
+  border-radius: 22px;
+  box-shadow: 8px 8px 0 #121212;
+  width: 100%;
+  padding: 0;
+   padding-bottom: 12px;
+   position: relative;
+}
+.role-section {
+  width: 85%;
+  margin: 0 auto;
+  padding: 8px 12px 12px;
+  border: 1px solid #67191f;
+}
+
+.signup-container .signup-form {
+  width: 100%;
+  margin: 0;
+  padding: 16px 36px 30px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  background-color: #eedbbf;
+  border-radius: 20px;
+}
+.signup-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.signup-field {
+  width: 85%;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.signup-heading {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.signup-heading h1 {
+    margin: 8px;
+    padding: 0;
+    color: #67191f;
+    font-size: 34px;
+    line-height: 1.2;
+}
+
+.signup-heading p {
+  margin: 0;
+  color: #121212;
+  font-size: 15px;
+}
+
+.signup-field label,
+.role-section legend {
+  color: #121212;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.signup-container .signup-field input {
+  width: 100%;
+  height: 42px;
+  margin: 0;
+  padding: 0 12px;
+
+  color: #121212;
+  background-color: #ffffff;
+
+  border: 2px solid #67191f;
+  border-radius: 9px;
+  outline: none;
+
+  font: inherit;
+  box-sizing: border-box;
+}
+.signup-container,
+.signup-container *,
+.signup-container *::before,
+.signup-container *::after {
+  box-sizing: border-box;
+}
+.signin-link {
+  width: 85%;
+  margin: 16px auto 0;
+  color: #121212;
+  text-align: center;
+  font-size: 20px;
+  text-decoration: none;
+
+}
+
+.signup-container .signup-field input::placeholder {
+  color: #67191f;
+}
+
+.signup-container .signup-field input:focus {
+  border-color: #ab3130;
+  box-shadow: 0 0 0 3px #ffffff;
+}
+
+.role-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.role-option {
+  min-height: 48px;
+  padding: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  color: #67191f;
+  background-color: #ffffff;
+
+  border: 2px solid #67191f;
+  border-radius: 9px;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.role-option:hover {
+  color: #ffffff;
+  background-color: #ab3130;
+  border-color: #ab3130;
+}
+
+.role-option:has(input:checked) {
+  color: #ffffff;
+  background-color: #67191f;
+  border-color: #67191f;
+}
+
+.role-option input {
+  width: auto;
+  height: auto;
+  margin: 0;
+  accent-color: #ab3130;
+}
+
+.signup-actions {
+  width: 85%;
+  margin: 12px auto 0;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.signup-actions button {
+  
+  height: 10px;
+  padding: 8px 14px;
+}
+
+.signup-container .signup-actions button {
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 18px;
+
+  border: 2px solid #67191f;
+  border-radius: 9px;
+
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.signup-button {
+  color: #ffffff;
+  background-color: #67191f;
+}
+
+.signup-button:hover:not(:disabled) {
+  background-color: #ab3130;
+  border-color: #ab3130;
+}
+
+.signup-button:disabled {
+  color: #eedbbf;
+  background-color: #67191f;
+  border-color: #67191f;
+  cursor: not-allowed;
+}
+
+.cancel-button {
+  color: #67191f;
+  background-color: #eedbbf;
+  border: 2px solid #67191f;
+
+  box-shadow: 4px 4px 0 #67191f;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.cancel-button:hover {
+  color: #ffffff;
+  background-color: #67191f;
+  border-color: #67191f;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #67191f;
+}
+.signup-container .signup-actions .cancel-button:active {
+  color: #ffffff;
+  background-color: #67191f;
+
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #67191f;
+}
+
+.signup-error {
+  margin: 0;
+  padding: 10px 12px;
+
+  color: #ffffff;
+  background-color: #ab3130;
+
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.password-error {
+  margin: 0;
+  color: #ab3130;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+.signin-link button {
+  margin: 0;
+  padding: 0;
+
+  color: #67191f;
+  background: none;
+  border: 0;
+
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.signin-link button:hover {
+  color: #ab3130;
+}
+.signup-container::before {
+    content: "";
+    position: absolute;
+
+    top: 15px;
+    left: 99px;
+
+    width: 22px;
+    height: 22px;
+
+    background-color: #ab3130;
+    border: 5px solid #67191f;
+    border-radius: 50%;
+    transition:
+        transform 0.3s ease,
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+.signup-container:hover::before {
+  transform: scale(1.2);
+  background-color: #67191f;
+  box-shadow: 0 0 0 5px #ab3130;
+}
+
+.signup-container:focus-within::before {
+  transform: translateX(12px) scale(1.1);
+  background-color: #67191f;
+  box-shadow: 0 0 0 4px #ab3130;
+}
+/*navbar*/
+.navbar {
+  min-height: 78px;
+  width: 100%;
+  padding: 8px 5%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+
+  color: #121212;
+  background-color: #eedbbf;
+
+  border-bottom: 2px solid #67191f;
+  box-sizing: border-box;
+}
+
+.navbar *,
+.navbar *::before,
+.navbar *::after {
+  box-sizing: border-box;
+}
+
+/* Logos */
+
+.navbar-logos {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.app-logo {
+  width: 58px;
+  height: 58px;
+  display: block;
+  object-fit: contain;
+}
+
+.organization-logo {
+  width: 70px;
+  height: 58px;
+  display: block;
+  object-fit: contain;
+}
+
+.logo-divider {
+  width: 2px;
+  height: 42px;
+  display: block;
+  background-color: #67191f;
+}
+
+/* Navigation links */
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.navbar-link {
+  min-height: 44px;
+  padding: 9px 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  color: #67191f;
+  background-color: transparent;
+
+  border: 2px solid transparent;
+  border-radius: 9px;
+
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.navbar-icon {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  transition: transform 0.2s ease;
+}
+
+/* Uiverse-inspired interaction */
+
+.navbar-link:hover {
+  color: #ffffff;
+  background-color: #ab3130;
+  border-color: #67191f;
+  transform: translateY(-2px);
+}
+
+.navbar-link:hover .navbar-icon {
+  transform: scale(1.12);
+}
+
+.navbar-link.active {
+  color: #ffffff;
+  background-color: #67191f;
+  border-color: #67191f;
+}
+
+.navbar-link:focus-visible {
+  outline: 3px solid #ab3130;
+  outline-offset: 3px;
+}
+
+.logout-button {
+  border: 2px solid #67191f;
+}
+
+/* Responsive navbar */
+
+@media (max-width: 750px) {
+  .navbar {
+    padding: 10px 16px;
+    flex-wrap: wrap;
+  }
+
+  .navbar-logos {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .navbar-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .navbar-link {
+    flex: 1;
+    min-width: 125px;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .organization-logo {
+    width: 60px;
+    height: 50px;
+  }
+
+  .navbar-link {
+    min-width: 100%;
+  }
+}

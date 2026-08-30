@@ -39,11 +39,14 @@ function Signup() {
   };
 
   return (
-    <main>
+    <main className="signup-page">
+      <section className="signup-container">
+      <div className="signup-heading">
       <h1>Sign Up</h1>
+      </div>
       <p className="error">{error}</p>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="signup-field">
           <label htmlFor="username">Username:</label>
           <input
             type="text"
@@ -54,58 +57,93 @@ function Signup() {
             required
           />
         </div>
-        <div>
-          <p>Select your role:</p>
+         <fieldset className="role-section">
+          <legend>Select your role</legend>
 
-          <label>
-            <input
-              type="radio"
-              name="role"
-              value="employee"
-              checked={formData.role === "employee"}
-              onChange={handleChange}
-            />
-            Employee
-          </label>
+          <div className="role-options">
+            <label className="role-option">
+              <input
+                type="radio"
+                name="role"
+                value="employee"
+                checked={formData.role === "employee"}
+                onChange={handleChange}
+              />
 
-          <label>
-            <input
-              type="radio"
-              name="role"
-              value="technician"
-              checked={formData.role === "technician"}
-              onChange={handleChange}
-            />
-            Technician
-          </label>
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
+              <span>Employee</span>
+            </label>
+
+            <label className="role-option">
+              <input
+                type="radio"
+                name="role"
+                value="technician"
+                checked={formData.role === "technician"}
+                onChange={handleChange}
+              />
+
+              <span>Technician</span>
+            </label>
+          </div>
+        </fieldset>
+        
+        <div className="signup-field">
+          <label htmlFor="password">Password</label>
+
           <input
             type="password"
             id="password"
             value={password}
             name="password"
             onChange={handleChange}
+            placeholder="Enter your password"
+            autoComplete="new-password"
             required
           />
         </div>
-        <div>
-          <label htmlFor="confirm">Confirm Password:</label>
+
+        <div className="signup-field">
+          <label htmlFor="confirm">Confirm Password</label>
+
           <input
             type="password"
             id="confirm"
             value={passwordConf}
             name="passwordConf"
             onChange={handleChange}
+            placeholder="Enter your password again"
+            autoComplete="new-password"
             required
           />
+          {passwordConf && password !== passwordConf && (
+            <p className="password-error">Passwords do not match.</p>
+          )}
         </div>
-        <div>
-          <button disabled={isFormInvalid() || submitting}>{submitting ? 'Signing up...' : 'Sign Up'}</button>
-          <button onClick={() => navigate("/")}>Cancel</button>
+        <div className="signup-actions">
+          <button
+            className="signup-button"
+            type="submit"
+            disabled={isFormInvalid() || submitting}
+          >
+            {submitting ? "Signing up..." : "Sign Up"}
+          </button>
+
+          <button
+            className="cancel-button"
+            type="button"
+            onClick={() => navigate("/")}
+          >
+            Cancel
+          </button>
         </div>
+        <p className="signin-link">
+          Already have an account?{" "}
+          <button type="button" onClick={() => navigate("/sign-in")}>
+            Sign in
+          </button>
+        </p>
       </form>
+      </section>
     </main>
   );
 }
