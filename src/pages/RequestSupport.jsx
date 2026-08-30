@@ -13,9 +13,9 @@ function RequestSupport() {
   const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    priority: "Medium",
-    requestDetails: {}
-  });
+  priority: "Medium",
+  requestDetails: {},
+})
 
 async function loadSubcategory() {
       try {
@@ -119,13 +119,13 @@ async function loadSubcategory() {
                 id={field.name}
                 name={field.name}
                 value={formData.requestDetails[field.label] || ""}
-                onChange={handleFieldChange}
+                onChange={(event) => handleFieldChange(event, field.label)}
                 required={field.required}
               >
                 <option value="">Select {field.label}</option>
 
                 {field.options.map((option) => (
-                  <option key={option} value={option} onChange={(event) => handleFieldChange(event, field.label)}>
+                  <option key={option} value={option}>
                     {option}
                   </option>
                 ))}

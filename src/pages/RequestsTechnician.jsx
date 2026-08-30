@@ -80,7 +80,7 @@ function RequestsTechnician() {
 
                 <td>{request.priority}</td>
 
-                <td>{request.Status}</td>
+                <td>{request.status}</td>
 
                 <td>
                   {new Date(request.createdAt).toLocaleDateString()}

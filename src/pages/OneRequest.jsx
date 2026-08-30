@@ -26,21 +26,16 @@ function OneRequest() {
         loadRequest()
     }, [requestId])
 
-    async function handleResolved() {
-        try {
-            const updatedRequest = await updateRequestStatus(
-                requestId,
-                "Resolved"
-            );
-
-            setRequest(updatedRequest);
-
-            toast.success("Issue resolved successfully")
-        } catch (err) {
-            console.log(err.response?.data || err.message);
-            toast.error("Could not update the request");
-        }
+  async function handleResolved() {
+    try {
+    const updatedRequest = await updateRequestStatus(requestId,"Resolved")
+    setRequest(updatedRequest)
+      toast.success("Issue resolved successfully")
+    } catch (err) {
+      console.log(err.response?.data || err.message)
+      toast.error("Could not update the request")
     }
+  }
 
     async function handleNotResolved(event) {
         event.preventDefault();
@@ -73,11 +68,8 @@ function OneRequest() {
   if (!request) {
     return <p>Request not found.</p>;
   }
-  const subcategory = request.category.subcategories.find(
-  (subcategory) =>
-    subcategory._id.toString() ===
-    request.subcategoryId.toString()
-)
+  const subcategory = request.category?.subcategories?.find(
+    (subcategory) =>subcategory._id.toString() === request.subcategoryId.toString())
 
   return (
     <div>
@@ -95,15 +87,12 @@ function OneRequest() {
           <strong>Status:</strong> {request.status}
         </p>
 
-              {Object.entries(request.requestDetails).map(([name, value]) => {
-                  const field = subcategory.formFields.find(
-                      (field) => field.name === name
-                  )
-                  return (
-                      <p key={name}>
-                          <strong>{field.label}:</strong> {value}
-                      </p>
-                  )})}
+        {Object.entries(request.requestDetails || {}).map(([key, detail]) => (
+          <div key={key}>
+            <strong>{detail?.label || key}:</strong>{" "}
+            {detail?.value ?? detail ?? "Not provided"}
+          </div>
+        ))}
       </section>
 
       

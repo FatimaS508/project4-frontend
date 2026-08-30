@@ -3,40 +3,36 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
-import {getOneRequest,addReply} from "../services/requests";
+import {getOneRequest,addReply, deleteReply} from "../services/requests";
 
 function ReplyTechnician() {
-  const { requestId } = useParams();
-  const { user } = useAuth();
-
-  const [request, setRequest] = useState(null);
+  const { requestId } = useParams()
+  const { user } = useAuth()
+  const [request, setRequest] = useState(null)
 
   const [formData, setFormData] = useState({
     message: "",
     attachmentUrl: "",
     fileType: "image"
-  });
-
+  })
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    async function loadRequest() {
+async function loadRequest() {
       try {
-        const response = await getOneRequest(requestId);
+        const response = await getOneRequest(requestId)
 
-        setRequest(response.request ?? response);
+        setRequest(response.request ?? response)
       } catch (err) {
         console.log(err);
-        setError("Failed to load request");
+        setError("Failed to load request")
       } finally {
         setLoading(false);
       }
     }
-
-    loadRequest();
-  }, [requestId]);
+  useEffect(() => {
+    loadRequest()
+  }, [requestId])
 
   function handleChange(event) {
     setFormData({
@@ -44,6 +40,20 @@ function ReplyTechnician() {
       [event.target.name]: event.target.value
     });
   }
+  async function handleDeleteReply(replyId) {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this reply?"
+  );
+
+  if (!confirmed) return
+  try {
+    await deleteReply(requestId, replyId)
+    await loadRequest()
+
+    toast.success("Reply deleted successfully")
+  } catch (err) {
+    console.log(err)
+    toast.error( "Failed to delete reply")}}
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -60,18 +70,14 @@ function ReplyTechnician() {
         url: formData.attachmentUrl.trim(),
         fileType: formData.fileType,
         fileName:
-          formData.attachmentUrl.split("/").pop() ||
-          "Attachment"
-      });
-    }
-
+          formData.attachmentUrl.split("/").pop() || "Attachment"})}
     const replyData = {
       message: formData.message.trim(),
       attachments
-    };
+    }
 
     try {
-      setSending(true);
+      setSending(true)
 
       const response = await addReply(
         requestId,
@@ -107,10 +113,10 @@ function ReplyTechnician() {
   if (error) {
     return <p>{error}</p>;
   }
-  const subcategory = request.category.subcategories.find(
+  const subcategory = request?.category?.subcategories?.find(
     (subcategory) =>
-      subcategory._id.toString() ===
-      request.subcategoryId.toString())
+      subcategory._id?.toString() ===
+      request.subcategoryId?.toString())
 
   return (
     <div>
@@ -149,14 +155,16 @@ function ReplyTechnician() {
             {request.status}
           </p>
 
+          
+
             {Object.entries(request.requestDetails).map(([name, value]) => {
-              const field = subcategory.formFields.find(
+              const field = subcategory?.formFields?.find(
                 (field) => field.name === name
               );
 
               return (
                 <p key={name}>
-                  <strong>{field.label}:</strong> {value}
+                  <strong>{field?.label || name}:</strong> {value}
                 </p>)})}
 
           {request.attachments?.length > 0 && (
@@ -293,6 +301,9 @@ function ReplyTechnician() {
                   </a>
                 </div>
               ))}
+              <button type="button" onClick={() => handleDeleteReply(reply._id)}>
+                Delete Reply
+              </button>
             </article>
           ))
         )}
