@@ -95,14 +95,6 @@ function OneRequest() {
         <p className="one-request-error">
           Request not found.
         </p>
-
-        <button
-          className="one-request-back"
-          type="button"
-          onClick={() => navigate("/requests")}
-        >
-          Back to Requests
-        </button>
       </main>
     )
   }
@@ -212,9 +204,11 @@ function OneRequest() {
                     </div>
 
                     <p>{reply.message}</p>
+                    
                   </article>
                 );
               })}
+              {request.status === "Resolved" && (<p className="resolvedIssue">Issue resolved and conversation closed.</p>)}
             </div>
           </section>
 

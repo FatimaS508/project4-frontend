@@ -1518,7 +1518,28 @@ body {
   color: #121212;
   background-color: #ffffff;
 }
+.filtering {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  color: #67191f;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
 
+.filtering:focus {
+  border-color: #67191f;
+}
+
+.filtering option {
+  font-family: inherit;
+  font-size: 14px;
+  color: #67191f;
+  background-color: white;
+}
 .all-requests-page *,
 .all-requests-page *::before,
 .all-requests-page *::after {
@@ -1908,6 +1929,10 @@ body {
 
   color: #121212;
   background-color: #ffffff;
+}
+.resolvedIssue{
+  font-size: 20px;
+
 }
 
 .one-request-page *,

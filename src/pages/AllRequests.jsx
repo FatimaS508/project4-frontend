@@ -7,10 +7,15 @@ function AllRequests() {
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [statusFilter, setStatusFilter] = useState("All")
 
-  const filteredRequests = requests.filter((request) =>
-    request.title?.toLowerCase().includes(search.trim().toLowerCase())
-  )
+  const filteredRequests = requests.filter((request) =>{
+    const matchesSearch = request.title?.toLowerCase().includes(search.trim().toLowerCase())
+
+    const matchesStatus = statusFilter === "All" || request.status === statusFilter
+
+    return matchesSearch && matchesStatus
+})
   async function loadRequests() {
     try {
       const response = await getAllRequests()
@@ -31,6 +36,12 @@ function AllRequests() {
         <p>Support History</p>
         <h1>All Requests</h1>
       </header>
+        <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="filtering">
+          <option value="All">All Statuses</option>
+          <option value="New">New</option>
+          <option value="Waiting for Confirmation"> Waiting for Confirmation</option>
+          <option value="Resolved">Resolved</option>
+        </select>
 
       <div className="request-search-container">
         <svg
@@ -56,6 +67,7 @@ function AllRequests() {
             ×
           </button>
         )}
+
       </div>
 
       {loading && (
@@ -124,8 +136,7 @@ function AllRequests() {
 
             <h2>No requests found</h2>
 
-            <p>{search
-                ? `No request matches “${search}”.`
+            <p>{search? `No request matches “${search}”.`
                 : "You have not submitted any support requests yet."}
             </p>
 
