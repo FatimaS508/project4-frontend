@@ -1,4 +1,5 @@
-# Project Name Frontend
+# Project Name 
+IT Support Center — Frontend
 
 ## Overview
 
@@ -12,18 +13,38 @@ Employees can create and track support requests, select the relevant category an
 - **Frontend Repository:** [Frontend Github Repository URL](https://github.com/FatimaS508/project4-frontend)
 
 ## Screenshots
-
-
-
 ### Home Page
 ![alt text](image.png)
 
-### Feature Page
-![alt text](image-5.png)
-### Other pages
+### Employee Dashboard
+
 ![alt text](image-1.png)
-![alt text](image-3.png)
+
+### Create Support Request
+
+![alt text](image-2.png)
+![Employee request history](image-3.png)
+### Employee Request History
 ![alt text](image-4.png)
+
+
+
+### Technician Dashboard
+
+![alt text](image-5.png)
+
+### Active Requests
+
+![alt text](image-6.png)
+
+### Request Details and Replies
+
+![alt text](image-7.png)
+![alt text](image-8.png)
+
+### Resolved Requests
+![alt text](image-9.png)
+
 
 
 ## Technologies Used
@@ -32,15 +53,49 @@ Employees can create and track support requests, select the relevant category an
 - Vite
 - React Router
 - Axios
-- CSS or CSS Modules
-
-Only include ones you used on frontend
+- CSS
+- Lucide React
+- React Hot Toast
 
 ## Features
 
-- User registration and login
+### Authentication and Users
+
+- Employee and technician registration
+- Role-based login and interfaces
 - Protected routes
-- etc.
+- Employee ID and department information
+- Authentication using JSON Web Tokens
+
+### Employee Features
+
+- Browse IT support categories and subcategories
+- Submit dynamic support request forms
+- Select request priority
+- Upload image attachments
+- Receive an automatically generated request number
+- View only requests created by the logged-in employee
+- Search requests by title or request number
+- Filter requests by status
+- Sort requests by newest or oldest
+- Edit requests while their status is New
+- View technician replies
+- Reply when an issue is not resolved
+- Confirm that an issue has been resolved
+- Preview request attachments
+
+### Technician Features
+
+- View new, active, and resolved request totals
+- View new requests organized by category and subcategory
+- Search requests by request number
+- Sort requests by newest or oldest
+- View employee ID and department
+- View and preview employee attachments
+- Reply to employee requests
+- Delete replies
+- View active requests
+- View completed requests and final messages
 
 
 ## Project Structure
@@ -109,20 +164,22 @@ http://localhost:5173
 
 ## Application Routes
 
-| Route                                   | Page                                 | Access     |
-| --------------------------------------- | ------------------------------------ | ---------- |
-| `/`                                     | Home page                            | Public     |
-| `/sign-up`                              | Registration page                    | Public     |
-| `/sign-in`                              | Login page                           | Public     |
-| `/dashboard`                            | Employee dashboard                   | Employee   |
-| `/category/:categoryId`                 | Category details                     | Employee   |
-| `/request/:subcategoryId`               | Create support request               | Employee   |
-| `/requests`                             | Employee request list                | Employee   |
-| `/requests/:requestId`                  | Request details and replies          | Employee   |
-| `/dashboard2`                           | Technician dashboard                 | Technician |
-| `/requests2/subcategory/:subcategoryId` | Subcategory request list             | Technician |
-| `/requests2/:requestId`                 | Request details and technician reply | Technician |
-| `/requests2/resolved`                   | Resolved request list                | Technician |
+| Route | Page | Access |
+|---|---|---|
+| `/` | Home page | Public |
+| `/sign-up` | Registration page | Public |
+| `/sign-in` | Login page | Public |
+| `/dashboard` | Employee dashboard | Employee |
+| `/category/:categoryId` | Category details | Employee |
+| `/request/:subcategoryId` | Create support request | Employee |
+| `/requests` | Employee request history | Employee |
+| `/requests/:requestId` | Employee request details and replies | Employee |
+| `/requests/:requestId/edit` | Edit support request | Employee |
+| `/dashboard2` | Technician dashboard | Technician |
+| `/requests2/subcategory/:subcategoryId` | New requests by subcategory | Technician |
+| `/requests2/:requestId` | Request details and technician reply | Technician |
+| `/requests2/active` | Active request list | Technician |
+| `/requests2/resolved` | Resolved request archive | Technician |
 
 
 
@@ -138,6 +195,13 @@ http://localhost:5173
 * As an employee, I can track the status of each request.
 * As an employee, I can view and reply to the technician’s messages.
 * As an employee, I can confirm when my issue has been resolved.
+- As an employee, I can view only the support requests that I created.
+- As an employee, I can search by request title or request number.
+- As an employee, I can sort my requests by newest or oldest.
+- As an employee, I can upload an image with my support request.
+- As an employee, I can preview an uploaded attachment.
+- As an employee, I can edit my request while its status is New.
+- As an employee, I receive a unique request number for each request.
 
 ### Technician
 
@@ -148,14 +212,21 @@ http://localhost:5173
 * As a technician, I can delete a reply.
 * As a technician, I can update the progress of a request.
 * As a technician, I can view resolved requests.
+- As a technician, I can view new, active, and resolved requests separately.
+- As a technician, I can search for a request using its request number.
+- As a technician, I can sort requests by newest or oldest.
+- As a technician, I can view the employee ID and department.
+- As a technician, I can view and preview employee attachments.
+- As a technician, I can view requests grouped by category and subcategory.
 
 ## Future Enhancements
 
-* Upload images, documents, and voice messages
+* Upload documents, and voice messages
 * Send real-time notifications for request updates
-* Add an admin role to control technician and employees role
-* Improve the filtering feature
+* Add an administrator role to manage and verify users
 * Support Arabic language
+* let the technician reject the request
+* Verify employee IDs against an organization database
 
 
 ## Team Members
@@ -166,3 +237,5 @@ http://localhost:5173
 
 
 ## Credits
+- Some UI elements were inspired by or adapted from [Uiverse](https://uiverse.io/).
+- Icons were provided by [Lucide](https://lucide.dev/).

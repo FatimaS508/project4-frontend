@@ -30,7 +30,7 @@ function Dashboard() {
     <main className="dashboard-page">
       <header className="dashboard-heading">
         <p>Support Center</p>
-        <h1>Welcome, {user?.username}</h1>
+        <h1>Welcome, Emp. {user?.username}</h1>
         <span>Select a category to get support.</span>
       </header>
 
