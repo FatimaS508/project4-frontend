@@ -10,6 +10,7 @@ import OneCategory from "./pages/oneCategory";
 import RequestSupport from "./pages/RequestSupport";
 import AllRequests from "./pages/AllRequests";
 import OneRequest from "./pages/OneRequest";
+import EditRequest from "./pages/EditRequest";
 
 import DashboardTechnician from "./pages/DashboardTechnician";
 import RequestsTechnician from "./pages/RequestsTechnician";
@@ -40,6 +41,7 @@ function App() {
             <Route path="/request/:subcategoryId" element={<ProtectedRoute><RequestSupport /></ProtectedRoute>}></Route>
             <Route path="/requests" element={<ProtectedRoute><AllRequests /></ProtectedRoute>} />
             <Route path="/requests/:requestId" element={<ProtectedRoute><OneRequest /></ProtectedRoute>} />
+            <Route path="/requests/:requestId/edit" element={<ProtectedRoute><EditRequest/></ProtectedRoute>}></Route>
           </>)}
         {user?.role === "technician" && (
           <>

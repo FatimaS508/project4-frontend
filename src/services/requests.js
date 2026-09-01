@@ -31,5 +31,10 @@ async function getMyRequests() {
   const response = await api.get("/requests/my")
   return response.data
 }
+async function updateRequest(requestId, requestBody) {
+  const response = await api.put(`/requests/${requestId}`,requestBody)
 
-export{createRequest, getAllRequests, addReply, getOneRequest, updateRequestStatus, deleteReply, getMyRequests}
+  return response.data;
+}
+
+export{createRequest, getAllRequests, addReply, getOneRequest, updateRequestStatus, deleteReply, getMyRequests, updateRequest}

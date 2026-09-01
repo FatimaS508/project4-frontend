@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getAllRequests } from "../services/requests";
+import { Funnel } from "lucide-react";
 
 function ResolvedRequests() {
   const navigate = useNavigate()
@@ -9,6 +10,8 @@ function ResolvedRequests() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchNumber, setSearchNumber] = useState("")
+  const [dateFilter, setDateFilter] = useState("Newest");
+
 
   async function loadRequests() {
     try {
@@ -32,6 +35,14 @@ function ResolvedRequests() {
   const filteredResolvedRequests = resolvedRequests.filter((request) => { const searchValue = searchNumber.trim().replace("#", "")
   return String(request.requestNumber || "").includes(searchValue)
 })
+.sort((a, b) => { if (dateFilter === "Newest") {
+    return new Date(b.createdAt) - new Date(a.createdAt)}
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  })
+  function clearSearchAndFilters() {
+    setSearchNumber("");
+    setDateFilter("Newest");
+  }
 
   function displayValue(value) {
     if (value === null || value === undefined || value === "") {
@@ -76,30 +87,50 @@ function ResolvedRequests() {
       <header className="resolved-page-heading">
         <p>Request Archive</p>
         <h1>Resolved Requests</h1>
-        <span>
-          Review completed requests and their final technician responses
-        </span>
       </header>
 
       <div className="resolved-count">
         <span>Resolved</span>
         <strong>{resolvedRequests.length}</strong>
       </div>
-      <div className="request-number-search">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m16 16 5 5" />
-        </svg>
+      <div className="requests-tools-row">
+  <div className="request-number-search">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m16 16 5 5" /></svg>
 
-        <input type="text" value={searchNumber} onChange={(event) => setSearchNumber(event.target.value)} placeholder="Search by request number"/>
+    <input type="text" value={searchNumber}onChange={(event) =>  setSearchNumber(event.target.value)}
+      placeholder="Search by request number"
+    />
 
-        {searchNumber && (<button
-            type="button"
-            onClick={() => setSearchNumber("")}
-            aria-label="Clear search"
-          > × </button>)}
-      </div>
-      {resolvedRequests.length > 0 ? ( <section className="resolved-requests-list">
+    {searchNumber && (
+      <button
+        type="button"
+        onClick={() => setSearchNumber("")}
+        aria-label="Clear search" >
+        ×
+      </button>)} </div>
+
+  <div className="requests-filter-group">
+    <Funnel
+      className="requests-filter-icon"
+      size={20}
+    />
+
+    <select
+      className="filtering"
+      value={dateFilter}
+      onChange={(event) =>
+        setDateFilter(event.target.value)
+      }
+      aria-label="Sort requests by date"
+    >
+      <option value="Newest">Newest First</option>
+      <option value="Oldest">Oldest First</option>
+    </select>
+  </div>
+</div>
+      {resolvedRequests.length > 0 && filteredResolvedRequests.length > 0 &&( <section className="resolved-requests-list">
           {filteredResolvedRequests.map((request, index) => {
             const subcategory = request.category?.subcategories?.find((item) =>
                   item._id?.toString() === request.subcategoryId?.toString())
@@ -202,7 +233,8 @@ function ResolvedRequests() {
             );
           })}
         </section>
-      ) : (
+      )}
+      {resolvedRequests.length === 0 && (
         <div className="resolved-empty-state">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="9" />
@@ -213,9 +245,20 @@ function ResolvedRequests() {
 
           <p>
             Completed support requests will appear here.
-          </p>
-        </div>
-      )}
+          </p> </div>)}
+      {resolvedRequests.length > 0 &&
+        filteredResolvedRequests.length === 0 && (
+          <div className="resolved-empty-state">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m16 16 5 5" />
+            </svg>
+
+            <h2>No results found</h2>
+
+            <p>No resolved request matches “{searchNumber}”. </p>
+          </div>
+        )}
     </main>
   );
 }

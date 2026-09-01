@@ -12,14 +12,13 @@ function ReplyTechnician() {
 
   const [request, setRequest] = useState(null)
 
-  const [formData, setFormData] = useState({
-    message: ""
-  })
+  const [formData, setFormData] = useState({ message: "" })
 
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [deletingReplyId, setDeletingReplyId] = useState(null)
   const [error, setError] = useState("")
+  const [previewImage, setPreviewImage] = useState(null);
 
   async function loadRequest() {
     try {
@@ -58,14 +57,13 @@ async function handleSubmit(event) {
   try {
     setSending(true)
 
-    const response = await addReply(requestId, {
+     await addReply(requestId, {
       message: formData.message.trim()
     })
 
-    setRequest(response.request)
+    await loadRequest();
 
-    setFormData({message: ""
-    })
+    setFormData({message: ""})
 
     toast.success("Reply added successfully",{duration: 4000})
   } catch (err) {
@@ -239,6 +237,20 @@ async function handleSubmit(event) {
                 </div>
               )
             })}
+            {request.attachments?.length > 0 && (
+              <div className="technician-request-attachments">
+                <h3>Employee Attachments</h3>
+
+                <div className="technician-attachment-list">
+                  {request.attachments.map((attachment, index) => (
+                    <img
+                      key={index}
+                      className="technician-attachment-image"
+                      src={attachment}
+                      alt={`Employee attachment ${index + 1}`}
+                      onClick={() => setPreviewImage(attachment)}
+                    />))}</div></div>
+            )}
           </div>
 
         </section>
@@ -376,6 +388,21 @@ async function handleSubmit(event) {
           </div>
         )}
       </section>
+      {previewImage && (
+        <div className="attachment-preview-modal" onClick={() => setPreviewImage(null)}
+        >
+          <div className="attachment-preview-content" onClick={(event) => event.stopPropagation()}>
+            <button
+              className="attachment-preview-close"
+              type="button"
+              onClick={() => setPreviewImage(null)}
+              aria-label="Close attachment preview"
+            > ×</button>
+
+            <img src={previewImage} alt="Employee attachment preview"/>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

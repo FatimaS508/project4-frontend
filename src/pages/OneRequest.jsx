@@ -55,7 +55,7 @@ function OneRequest() {
 
       const response = await addReply(requestId, { message: comment,})
 
-      setRequest((currentRequest) => ({...currentRequest,status: "In progress",replies: response.request.replies}))
+      setRequest((currentRequest) => ({...currentRequest,status: "Waiting for confirmation",replies: response.request.replies}))
       setComment("")
       setShowComment(false)
       toast.success("Your message was sent. Please wait for the technician's reply.",{duration: 4000})
@@ -125,21 +125,37 @@ function OneRequest() {
           <span className="heading-status">
             Status: {request.status}
           </span>
+          <span className="heading-status">Request no. {request.requestNumber}</span>
         </div>
       </header>
 
       <div className="request-page-layout">
         <div className="request-main-column">
           <section className="request-information-card">
-            <div className="section-heading">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 3h12v18H6z" />
-                <path d="M9 8h6" />
-                <path d="M9 12h6" />
-                <path d="M9 16h4" />
-              </svg>
+            <div className="request-details-heading">
+              <div className="section-heading">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 3h12v18H6z" />
+                  <path d="M9 8h6" />
+                  <path d="M9 12h6" />
+                  <path d="M9 16h4" />
+                </svg>
 
-              <h2>Request Details</h2>
+                <h2>Request Details</h2>
+              </div>
+
+              {request.status === "New" && ( <button
+                  className="edit-request-button"
+                  type="button"
+                  onClick={() => navigate(`/requests/${request._id}/edit`)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                  </svg>
+
+                  Edit Request
+                </button>)}
             </div>
 
             <div className="request-details-grid">
@@ -164,6 +180,18 @@ function OneRequest() {
                 </div>
               ))}
             </div>
+            {request.attachments?.length > 0 && (<div className="request-attachments">
+                <h3>Attachments</h3>
+
+                <div className="request-attachment-list">
+                  {request.attachments.map((attachment, index) => (
+                    <img
+                      className="request-attachment-image"
+                      key={index}
+                      src={attachment}
+                      alt={`Request attachment ${index + 1}`}
+                    />))}
+                </div></div>)}
           </section>
 
           <section className="request-messages-card">

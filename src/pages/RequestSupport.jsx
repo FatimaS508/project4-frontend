@@ -12,10 +12,12 @@ function RequestSupport() {
   const [categoryId, setCategoryId] = useState("")
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [selectedFileName, setSelectedFileName] = useState("");
 
   const [formData, setFormData] = useState({
     priority: "Medium",
     requestDetails: {},
+    attachments: []
   });
 
   async function loadSubcategory() {
@@ -44,13 +46,32 @@ function RequestSupport() {
   }
 
   function handleFieldChange(event, fieldLabel) {
-    const { value, type, files } = event.target
+  const { value, type, files } = event.target
 
-    setFormData((currentData) => ({...currentData,
-      requestDetails: {...currentData.requestDetails,[fieldLabel]: type === "file" ? files[0] : value,
-      },
-    }))
+  if (type === "file") {const selectedFile = files[0]
+    if (!selectedFile) {
+      return;
+    }
+
+    if (selectedFile.size > 2 * 1024 * 1024) {
+      toast.error("Image must be smaller than 2 MB")
+      event.target.value = ""
+      return;
+    }
+
+    const reader = new FileReader()
+
+    reader.onloadend = () => {
+      setFormData((currentData) => ({...currentData, attachments: [reader.result]
+      }))
+
+      setSelectedFileName(selectedFile.name)}
+
+    reader.readAsDataURL(selectedFile)
+    return
   }
+
+  setFormData((currentData) => ({...currentData, requestDetails: {...currentData.requestDetails,[fieldLabel]: value}}))}
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -58,12 +79,7 @@ function RequestSupport() {
     try {
       setSubmitting(true)
 
-      const requestBody = {
-        categoryId,
-        subcategoryId,
-        priority: formData.priority,
-        requestDetails: formData.requestDetails,
-      }
+      const requestBody = { categoryId, subcategoryId, priority: formData.priority, requestDetails: formData.requestDetails, attachments: formData.attachments}
 
       await createRequest(requestBody)
 
@@ -221,22 +237,28 @@ function RequestSupport() {
                       Click here to select an image
                     </span>
 
-                    <span className="selected-file-name">
-                      {formData.requestDetails[field.label]?.name ||
-                        "No image selected"}
-                    </span>
+                      <span className="selected-file-name">
+                        {selectedFileName || (formData.attachments.length > 0? "Current image attached"
+                            : "No image selected")}
+                      </span>
 
-                    <input
-                      className="file-upload-input"
-                      id={field.name}
-                      name={field.name}
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) =>
-                        handleFieldChange(event, field.label)
-                      }
-                      required={field.required}
-                    />
+                      {formData.attachments[0] && (<img
+                          className="attachment-preview"
+                          src={formData.attachments[0]}
+                          alt="Request attachment preview" />
+                      )}
+
+                      <input
+                        className="file-upload-input"
+                        id={field.name}
+                        name={field.name}
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) =>
+                          handleFieldChange(event, field.label)
+                        }
+                        required={field.required && formData.attachments.length === 0}
+                      />
                   </label>
                 ) : (
                 <input
