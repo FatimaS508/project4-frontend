@@ -8,13 +8,14 @@ function RequestsTechnician() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [searchNumber, setSearchNumber] = useState("")
 
 async function loadRequests() {
       try {
         const response = await getAllRequests()
         const allRequests = response.requests ?? response
 
-        const subcategoryRequests = allRequests.filter((request) => request.subcategoryId?.toString() === subcategoryId?.toString()
+        const subcategoryRequests = allRequests.filter((request) => request.subcategoryId?.toString() === subcategoryId?.toString() && request.status === "New"
         )
         setRequests(subcategoryRequests)
       } catch (err) {
@@ -27,6 +28,10 @@ async function loadRequests() {
   useEffect(() => {
     loadRequests()
   }, [subcategoryId])
+  const filteredNewRequests = requests.filter((request) => {
+        const searchValue = searchNumber.trim().replace("#", "");
+        return String(request.requestNumber || "").includes(searchValue);
+    })
 
   function formatDate(date) {
     if (!date) {return "Not available"
@@ -70,10 +75,26 @@ async function loadRequests() {
         </span>
       </header>
 
-      <div className="technician-requests-count">
-        <span>Requests</span>
-        <strong>{requests.length}</strong>
-      </div>
+    <div className="technician-requests-count">
+      <span>Requests</span>
+
+      <strong>
+        {searchNumber? `${filteredNewRequests.length}/${requests.length}`: requests.length}
+      </strong>
+    </div>
+    <div className="request-number-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m16 16 5 5" />
+      </svg>
+
+      <input type="text" value={searchNumber} onChange={(event) => setSearchNumber(event.target.value)} placeholder="Search by request number" />
+
+      {searchNumber && (
+        <button type="button" onClick={() => setSearchNumber("")} aria-label="Clear search">
+          ×
+        </button>)}
+    </div>
 
       {requests.length === 0 ? (
         <div className="technician-requests-empty">
@@ -92,7 +113,19 @@ async function loadRequests() {
 
           <Link to="/dashboard2"> Return to Dashboard </Link>
         </div>
-      ) : (
+    ) : filteredNewRequests.length === 0 ? (
+      <div className="technician-requests-empty">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m16 16 5 5" />
+        </svg>
+
+        <h2>Request not found</h2>
+
+        <p> No request matches “{searchNumber}”.</p>
+
+      </div>
+    ) : (
         <section className="technician-table-card">
           <div className="technician-table-wrapper">
             <table className="technician-requests-table">
@@ -115,7 +148,7 @@ async function loadRequests() {
               </thead>
 
               <tbody>
-                {requests.map((request) => (
+                {filteredNewRequests.map((request) => (
                   <tr key={request._id}>
                     <td data-label="Request ID">
                       <strong className="request-number">

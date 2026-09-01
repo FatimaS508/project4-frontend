@@ -8,36 +8,42 @@ function ActiveRequests() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
+  const [searchNumber, setSearchNumber] = useState("")
   
 
-  async function loadActiveRequests() {
-    try {
-      const response = await getAllRequests()
-      const allRequests = response.requests ?? response;
+    async function loadActiveRequests() {
+        try {
+            const response = await getAllRequests()
+            const allRequests = response.requests ?? response;
 
-      const filteredRequests = allRequests.filter(
-        (request) => request.status !== "New" && request.status !== "Resolved"
-      )
+            const filteredRequests = allRequests.filter(
+                (request) => request.status !== "New" && request.status !== "Resolved"
+            )
 
 
-      setRequests(filteredRequests);
-    } catch (err) {
-      console.log(err)
-      setError("Failed to load active requests")
-    } finally {
-      setLoading(false);
+            setRequests(filteredRequests);
+        } catch (err) {
+            console.log(err)
+            setError("Failed to load active requests")
+        } finally {
+            setLoading(false);
+        }
     }
-  }
 
   useEffect(() => {
     loadActiveRequests()
   }, [])
+    
     const sortedRequests = [...requests].sort((a, b) => {
         if (sortOrder === "newest") {
             return new Date(b.createdAt) - new Date(a.createdAt)
         }
 
         return new Date(a.createdAt) - new Date(b.createdAt)
+    })
+    const filteredActiveRequests = sortedRequests.filter((request) => {
+        const searchValue = searchNumber.trim().replace("#", "");
+        return String(request.requestNumber || "").includes(searchValue);
     })
 
   if (loading) {
@@ -93,8 +99,26 @@ function ActiveRequests() {
                       </span>
                   </div>
         </div>
+              <div className="request-number-search">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7" />
+                      <path d="m16 16 5 5" />
+                  </svg>
 
-        {requests.length > 0 ? (
+                  <input type="text" value={searchNumber} onChange={(event) => setSearchNumber(event.target.value)} placeholder="Search by request number"/>
+
+                  {searchNumber && (
+                      <button
+                          type="button"
+                          onClick={() => setSearchNumber("")}
+                          aria-label="Clear search"
+                      >
+                          ×
+                      </button>
+                  )}
+              </div>
+
+        {filteredActiveRequests.length > 0 ? (
           <div className="requests-table-container">
             <table className="requests-table">
               <thead>
@@ -112,7 +136,7 @@ function ActiveRequests() {
               </thead>
 
               <tbody>
-                {sortedRequests.map((request) => (
+                {filteredActiveRequests.map((request) => (
                   <tr key={request._id}>
                         <td>
                             {request.requestNumber
@@ -159,12 +183,17 @@ function ActiveRequests() {
               </tbody>
             </table>
           </div>
-        ) : (
-          <div className="technician-empty-state">
-            <h2>No active requests</h2>
-            <p>You currently have no requests receiving support.</p>
-          </div>
-        )}
+              ) : (
+                  <div className="technician-empty-state">
+                      <h2>No active requests</h2>
+                      <p>You currently have no requests receiving support.</p>
+                      <p>
+                          {searchNumber
+                              ? `No active request matches “${searchNumber}”.`
+                              : "You currently have no requests receiving support."}
+                      </p>
+                  </div>
+              ) }
       </section>
     </main>
   );

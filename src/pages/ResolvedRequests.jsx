@@ -8,6 +8,7 @@ function ResolvedRequests() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [searchNumber, setSearchNumber] = useState("")
 
   async function loadRequests() {
     try {
@@ -28,6 +29,9 @@ function ResolvedRequests() {
   const resolvedRequests = requests.filter(
     (request) => request.status === "Resolved"
   )
+  const filteredResolvedRequests = resolvedRequests.filter((request) => { const searchValue = searchNumber.trim().replace("#", "")
+  return String(request.requestNumber || "").includes(searchValue)
+})
 
   function displayValue(value) {
     if (value === null || value === undefined || value === "") {
@@ -81,16 +85,32 @@ function ResolvedRequests() {
         <span>Resolved</span>
         <strong>{resolvedRequests.length}</strong>
       </div>
+      <div className="request-number-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m16 16 5 5" />
+        </svg>
+
+        <input type="text" value={searchNumber} onChange={(event) => setSearchNumber(event.target.value)} placeholder="Search by request number"/>
+
+        {searchNumber && (<button
+            type="button"
+            onClick={() => setSearchNumber("")}
+            aria-label="Clear search"
+          > × </button>)}
+      </div>
       {resolvedRequests.length > 0 ? ( <section className="resolved-requests-list">
-          {resolvedRequests.map((request, index) => {
+          {filteredResolvedRequests.map((request, index) => {
             const subcategory = request.category?.subcategories?.find((item) =>
                   item._id?.toString() === request.subcategoryId?.toString())
 
             const fields = subcategory?.formFields || subcategory?.fields || []
 
-            const finalReply = request.replies?.[request.replies.length - 1];
+            const finalReply = request.replies?.[request.replies.length - 1]
+            
 
             return (
+              
               <details className="resolved-request-card"
                 key={request._id}
               >

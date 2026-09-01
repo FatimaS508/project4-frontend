@@ -188,7 +188,10 @@ function RequestSupport() {
                   value={
                     formData.requestDetails[field.label] || ""
                   }
-                  placeholder={`Enter ${field.label.toLowerCase()}`}
+                    placeholder={field.label === "Request Justification" ? "Explain why you need this access or service"
+                      : field.label === "Required Permissions" ? "Example: Admin access to Microsoft Teams"
+                        : `Enter ${field.label.toLowerCase()}`
+                    }
                   onChange={(event) =>
                     handleFieldChange(event, field.label)
                   }

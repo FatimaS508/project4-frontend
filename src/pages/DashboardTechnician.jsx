@@ -83,9 +83,6 @@ function DashboardTechnician() {
         <p>IT Support Center</p>
         <h1>Technician Dashboard</h1>
 
-        <span>
-          Review new requests and monitor your support workload.
-        </span>
       </header>
 
       <section className="technician-summary-grid">
@@ -99,10 +96,18 @@ function DashboardTechnician() {
             </svg>
           </div>
 
-          <div className="summary-content">
+          <div className="summary-content" id="new-requests">
             <span>New Requests</span>
             <strong>{newRequests.length}</strong>
             <p>Waiting for technician review</p>
+            <a href="#new-requests" className="new-requests-scroll">
+              <span>View below</span>
+
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14" />
+                <path d="m7 14 5 5 5-5" />
+              </svg>
+            </a>
           </div>
         </article>
 

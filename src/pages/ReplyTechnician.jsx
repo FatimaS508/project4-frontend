@@ -173,6 +173,7 @@ async function handleSubmit(event) {
         <div className="reply-heading-badges">
           <span>{request.priority} Priority</span>
           <strong>{request.status}</strong>
+          <strong>Request no. {request.requestNumber}</strong>
         </div>
       </header>
 

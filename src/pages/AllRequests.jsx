@@ -11,15 +11,27 @@ function AllRequests() {
   const [statusFilter, setStatusFilter] = useState("All")
   const [dateFilter, setDateFilter]= useState('Newest')
 
-  const filteredRequests = requests.filter((request) => request.title?.toLowerCase().includes(search.trim().toLowerCase())
-    && (statusFilter === "All" || request.status === statusFilter))
-  .sort((a,b)=>{
-    if(dateFilter === "Newest"){
-      return new Date(b.createdAt)- new Date(a.createdAt)
-    }else{
-      return new Date(a.createdAt)- new Date(b.createdAt)
+  const filteredRequests = requests.filter((request) => {
+    const searchValue = search.trim().toLowerCase().replace("#", "")
+    const matchesTitle = request.title?.toLowerCase().includes(searchValue)
+
+    const matchesNumber = String(request.requestNumber || "").includes(searchValue)
+
+    const matchesStatus =statusFilter === "All" || request.status === statusFilter
+
+    return (matchesTitle || matchesNumber) && matchesStatus}).sort((a, b) => {if (dateFilter === "Newest") {
+      return new Date(b.createdAt) - new Date(a.createdAt)
     }
+
+    return new Date(a.createdAt) - new Date(b.createdAt)
   })
+  const filtersAreActive =search.trim() !== "" || statusFilter !== "All" || dateFilter !== "Newest";
+
+  function clearFilters() {
+    setSearch("");
+    setStatusFilter("All");
+    setDateFilter("Newest");
+  }
     
 
   async function loadRequests() {
@@ -40,52 +52,63 @@ function AllRequests() {
     <main className="all-requests-page">
       <header className="requests-heading">
         <p>Support History</p>
-        <h1>All Requests</h1>
+        <h1>All My Requests</h1>
       </header>
-      <div className="filter-search"></div>
-      <div className="filter-title">
-        <Funnel size={22} />
-        <p>Filter by</p>
-      </div>
-        <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="filtering" >
-          
-          <option value="All">All Statuses</option>
-          <option value="New">New</option>
-          <option value="Waiting for confirmation"> Waiting for Confirmation</option>
-          <option value="Resolved">Resolved</option>
-        </select>
-        
-      <select value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="filtering">
-        <option value="Newest">Newest First</option>
-        <option value="Oldest">Oldest First</option>
-      </select>
+      
+      <div className="requests-tools-row">
+  <div className="request-search-container">
+    <svg
+      className="request-search-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m16 16 5 5" />
+    </svg>
 
-      <div className="request-search-container">
-        <svg
-          className="request-search-icon"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="7" />
-          <path d="m16 16 5 5" />
-        </svg>
+    <input
+      type="text"
+      placeholder="Search by title or request number"
+      value={search}
+      onChange={(event) => setSearch(event.target.value)}
+    />
 
-        <input type="text"
-          placeholder="Search support requests"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
+    {search && (
+      <button
+        className="clear-search-button"
+        type="button"
+        onClick={() => setSearch("")}
+        aria-label="Clear search"
+      >
+        ×
+      </button>
+    )}
+  </div>
 
-        {search && (<button className="clear-search-button"
-            type="button"
-            onClick={() => setSearch("")}
-            aria-label="Clear search"
-          >
-            ×
-          </button>
-        )}
+  <div className="requests-filter-group">
+    <Funnel className="requests-filter-icon" size={20} />
 
-      </div>
+    <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}
+      className="filtering"
+      aria-label="Filter by status"
+    >
+      <option value="All">All Statuses</option>
+      <option value="New">New</option>
+      <option value="Waiting for confirmation">Waiting for Confirmation</option>
+      <option value="Resolved">Resolved</option>
+    </select>
+
+    <select
+      value={dateFilter}
+      onChange={(event) => setDateFilter(event.target.value)}
+      className="filtering"
+      aria-label="Sort by date"
+    >
+      <option value="Newest">Newest First</option>
+      <option value="Oldest">Oldest First</option>
+    </select>
+  </div>
+</div>
 
       {loading && (
         <p className="requests-page-message"> Loading requests...</p>
@@ -123,6 +146,7 @@ function AllRequests() {
                     <strong className="status-badge">
                       {request.status}
                     </strong>
+                    <strong className="status-badge">Request no. {request.requestNumber}</strong>
                   </p>
                 </div>
               </div>
@@ -143,31 +167,31 @@ function AllRequests() {
       )}
 
       {!loading && !error && filteredRequests.length === 0 && (
-          <div className="empty-requests">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 3h12v18H6z" />
-              <path d="M9 8h6" />
-              <path d="M9 12h6" />
-              <path d="M9 16h4" />
-            </svg>
+        <div className="empty-requests">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 3h12v18H6z" />
+            <path d="M9 8h6" />
+            <path d="M9 12h6" />
+            <path d="M9 16h4" />
+          </svg>
 
-            <h2>No requests found</h2>
+          <h2>
+            {requests.length === 0
+              ? "No requests yet"
+              : "No results found"}
+          </h2>
 
-            <p>{search? `No request matches “${search}”.`
-                : "You have not submitted any support requests yet."}
-            </p>
-
-            {search && (<button
-                type="button"
-                onClick={() => setSearch("")}
-              >
-                Clear Search
-              </button>
-            )}
-          </div>
-        )}
+          <p>
+            {requests.length === 0
+              ? "You have not submitted any support requests yet."
+              : search
+                ? `No request matches “${search}”.`
+                : "No requests match the selected filters."}
+          </p>
+        </div>
+      )}
     </main>
-  );
+  )
 }
 
 export default AllRequests;
