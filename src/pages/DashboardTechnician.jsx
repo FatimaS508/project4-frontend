@@ -106,16 +106,16 @@ function DashboardTechnician() {
           </div>
         </article>
 
-        <article className="technician-summary-card">
-          <div className="summary-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 5h16v11H8l-4 4z" />
-            </svg>
-          </div>
-          <Link
-            to={activeRequests.length > 0? `/requests2/${activeRequests[0]._id}` : "#"} /*check this */
-            className="dashboard-card"
-          >
+        <Link
+          to="/requests2/active"
+          className="technician-summary-card"
+        >
+            <div className="summary-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5h16v11H8l-4 4z" />
+              </svg>
+            </div>
+
             <div className="summary-content">
               <span>Active Requests</span>
               <strong>{activeRequests.length}</strong>
@@ -131,7 +131,7 @@ function DashboardTechnician() {
               <path d="m14 7 5 5-5 5" />
             </svg>
           </Link>
-        </article>
+
 
         <Link
           className="technician-summary-card resolved-summary"
