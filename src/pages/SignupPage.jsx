@@ -9,7 +9,9 @@ function Signup() {
     username: "",
     password: "",
     passwordConf: "",
-    role: "employee"
+    role: "employee",
+    employeeId: "",
+    department: ""
   });
   const [ submitting, setSubmitting ] = useState(false)
 
@@ -79,13 +81,56 @@ function Signup() {
                 name="role"
                 value="technician"
                 checked={formData.role === "technician"}
-                onChange={handleChange}
+                  onChange={(event) => {
+                    setFormData({...formData,
+                      role: event.target.value,
+                      employeeId: "",
+                      department: "",
+                    })}}
               />
 
               <span>Technician</span>
             </label>
           </div>
         </fieldset>
+          <div className="signup-field">
+            <label htmlFor="employeeId">Employee ID</label>
+
+            <input
+              id="employeeId"
+              type="text"
+              name="employeeId"
+              value={formData.employeeId}
+              onChange={handleChange}
+              readOnly={formData.role === "technician"}
+              required={formData.role === "employee"}
+              placeholder="Enter your employee ID"
+              className={formData.role === "technician" ? "readonly-field" : ""}
+            />
+          </div>
+
+          <div className="signup-field">
+            <label htmlFor="department">Department</label>
+
+            <select
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              disabled={formData.role === "technician"}
+              required={formData.role === "employee"}
+              className={formData.role === "technician" ? "readonly-field" : ""}
+            >
+              <option value="">Select Department</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Finance">Finance</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Operations">Operations</option>
+              <option value="Information Technology">
+                Information Technology
+              </option>
+            </select>
+          </div>
         
         <div className="signup-field">
           <label htmlFor="password">Password</label>

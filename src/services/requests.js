@@ -27,5 +27,9 @@ async function deleteReply(requestId, replyId){
     const response= await api.delete(`/requests/${requestId}/replies/${replyId}`)
     return response.data
 }
+async function getMyRequests() {
+  const response = await api.get("/requests/my")
+  return response.data
+}
 
-export{createRequest, getAllRequests, addReply, getOneRequest, updateRequestStatus, deleteReply}
+export{createRequest, getAllRequests, addReply, getOneRequest, updateRequestStatus, deleteReply, getMyRequests}

@@ -99,8 +99,11 @@ function ActiveRequests() {
             <table className="requests-table">
               <thead>
                 <tr>
+                  <th>Request ID</th>
                   <th>Request</th>
                   <th>Employee</th>
+                  <th>Employee ID</th>
+                  <th>Department</th>
                   <th>Priority</th>
                   <th>Date & Time</th>
                   <th>Status</th>
@@ -111,10 +114,22 @@ function ActiveRequests() {
               <tbody>
                 {sortedRequests.map((request) => (
                   <tr key={request._id}>
+                        <td>
+                            {request.requestNumber
+                                ? `#${request.requestNumber}`
+                                : " "}
+                        </td>
                     <td>{request.title}</td>
 
                     <td>
                       {request.createdBy?.username || "Unknown employee"}
+                    </td>
+                    <td>
+                        {request.createdBy?.employeeId || " "}
+                    </td>
+
+                     <td>
+                        {request.createdBy?.department || " "}
                     </td>
 
                     <td>{request.priority}</td>

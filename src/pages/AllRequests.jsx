@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { getAllRequests } from "../services/requests";
+import { getMyRequests } from "../services/requests"
 import { Funnel } from 'lucide-react';
 
 function AllRequests() {
@@ -24,7 +24,7 @@ function AllRequests() {
 
   async function loadRequests() {
     try {
-      const response = await getAllRequests()
+      const response = await getMyRequests()
       setRequests(response)
     } catch (err) {
       setError("Could not load your requests.")
@@ -42,7 +42,7 @@ function AllRequests() {
         <p>Support History</p>
         <h1>All Requests</h1>
       </header>
-      <div className="filter-search"></div>{/*check this*/ }
+      <div className="filter-search"></div>
       <div className="filter-title">
         <Funnel size={22} />
         <p>Filter by</p>

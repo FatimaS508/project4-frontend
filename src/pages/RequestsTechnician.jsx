@@ -98,7 +98,10 @@ async function loadRequests() {
             <table className="technician-requests-table">
               <thead>
                 <tr>
+                  <th>Request ID</th>
                   <th>Employee</th>
+                  <th>Employee ID</th>
+                  <th>Department</th>
                   <th>Title</th>
                   <th>Priority</th>
                   <th>Status</th>
@@ -114,6 +117,11 @@ async function loadRequests() {
               <tbody>
                 {requests.map((request) => (
                   <tr key={request._id}>
+                    <td data-label="Request ID">
+                      <strong className="request-number">
+                        {request.requestNumber? `#${request.requestNumber}`: " "}
+                      </strong>
+                    </td>
                     <td data-label="Employee">
                       <div className="employee-information">
                         <span className="employee-avatar">
@@ -123,6 +131,13 @@ async function loadRequests() {
                           {request.createdBy?.username || "Unknown"}
                         </strong>
                       </div>
+                    </td>
+                    <td>
+                        {request.createdBy?.employeeId || " "}
+                    </td>
+
+                     <td>
+                        {request.createdBy?.department || " "}
                     </td>
 
                     <td data-label="Title">
@@ -138,7 +153,13 @@ async function loadRequests() {
                       <span className="technician-status-badge"> {request.status}</span>
                     </td>
 
-                    <td data-label="Created"> {formatDate(request.createdAt)}
+                    <td data-label="Created"> {new Date(request.createdAt).toLocaleString("en-GB", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
                     </td>
 
                     <td data-label="Action">

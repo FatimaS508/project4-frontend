@@ -6,6 +6,7 @@ nav a{
     margin-right: 10px
 }
 /*signup page*/
+
 html,
 body,
 #root {
@@ -100,21 +101,23 @@ body {
   font-weight: 700;
 }
 
-.signup-container .signup-field input {
+.signup-container .signup-field input,
+.signup-container .signup-field select {
   width: 100%;
   height: 42px;
   margin: 0;
   padding: 0 12px;
-
   color: #121212;
   background-color: #ffffff;
-
   border: 2px solid #67191f;
   border-radius: 9px;
   outline: none;
-
   font: inherit;
   box-sizing: border-box;
+}
+
+.signup-container .signup-field select {
+  cursor: pointer;
 }
 .signup-container,
 .signup-container *,
@@ -136,9 +139,18 @@ body {
   color: #67191f;
 }
 
-.signup-container .signup-field input:focus {
+.signup-container .signup-field input:focus,
+.signup-container .signup-field select:focus {
   border-color: #ab3130;
   box-shadow: 0 0 0 3px #ffffff;
+}
+.signup-container .signup-field .readonly-field,
+.signup-container .signup-field select:disabled {
+  color: #756768;
+  background-color: #d8c8b2;
+  border-color: #9d8385;
+  cursor: not-allowed;
+  opacity: 0.75;
 }
 
 .role-options {

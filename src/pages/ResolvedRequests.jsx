@@ -110,6 +110,9 @@ function ResolvedRequests() {
                       <span className="resolved-status">
                         Resolved
                       </span>
+                      <span className="resolved-status">
+                        Request no.: {request.requestNumber}
+                      </span>
                     </div>
                   </div>
 
