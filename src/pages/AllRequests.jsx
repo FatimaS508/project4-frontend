@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { getAllRequests } from "../services/requests";
+import { Funnel } from 'lucide-react';
 
 function AllRequests() {
   const [requests, setRequests] = useState([])
@@ -8,14 +9,19 @@ function AllRequests() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
+  const [dateFilter, setDateFilter]= useState('Newest')
 
-  const filteredRequests = requests.filter((request) =>{
-    const matchesSearch = request.title?.toLowerCase().includes(search.trim().toLowerCase())
+  const filteredRequests = requests.filter((request) => request.title?.toLowerCase().includes(search.trim().toLowerCase())
+    && (statusFilter === "All" || request.status === statusFilter))
+  .sort((a,b)=>{
+    if(dateFilter === "Newest"){
+      return new Date(b.createdAt)- new Date(a.createdAt)
+    }else{
+      return new Date(a.createdAt)- new Date(b.createdAt)
+    }
+  })
+    
 
-    const matchesStatus = statusFilter === "All" || request.status === statusFilter
-
-    return matchesSearch && matchesStatus
-})
   async function loadRequests() {
     try {
       const response = await getAllRequests()
@@ -36,12 +42,23 @@ function AllRequests() {
         <p>Support History</p>
         <h1>All Requests</h1>
       </header>
-        <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="filtering">
+      <div className="filter-search"></div>{/*check this*/ }
+      <div className="filter-title">
+        <Funnel size={22} />
+        <p>Filter by</p>
+      </div>
+        <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="filtering" >
+          
           <option value="All">All Statuses</option>
           <option value="New">New</option>
-          <option value="Waiting for Confirmation"> Waiting for Confirmation</option>
+          <option value="Waiting for confirmation"> Waiting for Confirmation</option>
           <option value="Resolved">Resolved</option>
         </select>
+        
+      <select value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="filtering">
+        <option value="Newest">Newest First</option>
+        <option value="Oldest">Oldest First</option>
+      </select>
 
       <div className="request-search-container">
         <svg

@@ -113,7 +113,7 @@ function DashboardTechnician() {
             </svg>
           </div>
           <Link
-            to={activeRequests.length > 0? `/requests2/${activeRequests[0]._id}` : "#"}
+            to={activeRequests.length > 0? `/requests2/${activeRequests[0]._id}` : "#"} /*check this */
             className="dashboard-card"
           >
             <div className="summary-content">

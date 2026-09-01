@@ -197,10 +197,8 @@ function OneRequest() {
                         {isTechnician ? "T" : "E"}
                       </span>
 
-                      <h3>
-                        {isTechnician? "Technician"
-                          : "Employee"}
-                      </h3>
+                      <h3>{reply.sender?.username} - {isTechnician ? "Technician" : "You"}
+                      </h3> 
                     </div>
 
                     <p>{reply.message}</p>
@@ -220,8 +218,7 @@ function OneRequest() {
                 <h2>Is your issue resolved?</h2>
 
                 <p>
-                  Please confirm whether the technician’s
-                  solution fixed your issue.
+                  Please confirm whether the technician’s solution fixed your issue.
                 </p>
               </div>
 

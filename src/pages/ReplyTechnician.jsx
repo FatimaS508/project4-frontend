@@ -3,11 +3,7 @@ import { Link, useParams } from "react-router"
 import toast from "react-hot-toast"
 
 import { useAuth } from "../context/AuthContext"
-import {
-  getOneRequest,
-  addReply,
-  deleteReply
-} from "../services/requests"
+import {getOneRequest,addReply,deleteReply} from "../services/requests"
 
 
 function ReplyTechnician() {
@@ -123,14 +119,6 @@ async function handleSubmit(event) {
     }
 
     return value
-  }
-
-  function getAttachmentUrl(attachment) {
-    if (typeof attachment === "string") {
-      return attachment
-    }
-
-    return attachment?.url
   }
 
   if (loading) {
@@ -252,37 +240,6 @@ async function handleSubmit(event) {
             })}
           </div>
 
-          {request.attachments?.length > 0 && (
-            <div className="request-attachments">
-              <h3>Request Attachments</h3>
-
-              <div className="attachment-list">
-                {request.attachments.map(
-                  (attachment, index) => (
-                    <a
-                      key={
-                        attachment._id ||
-                        attachment.url ||
-                        index
-                      }
-                      href={getAttachmentUrl(attachment)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path d="m8 12 5-5a3 3 0 0 1 4 4l-7 7a5 5 0 0 1-7-7l8-8" />
-                      </svg>
-
-                      {attachment.fileName || `View attachment ${index + 1}`}
-                    </a>
-                  )
-                )}
-              </div>
-            </div>
-          )}
         </section>
 
         <section className="technician-reply-form-section">
@@ -382,7 +339,7 @@ async function handleSubmit(event) {
 
                     <div>
                       <h3>
-                        {reply.sender?.username || "Unknown technician"}
+                        {reply.sender?.username || "Unknown technician"} -{" "} {reply.sender?.role === "technician" ? "You" : "Employee"}
                       </h3>
 
                       <p>
