@@ -99,6 +99,7 @@ function OneRequest() {
     )
   }
 
+
   return (
     <main className="one-request-page">
       <button
@@ -112,6 +113,25 @@ function OneRequest() {
 
         Back
       </button>
+      {request.status === "Rejected" && (
+  <section className="rejected-request-notice">
+    <h2>Request Rejected and Closed</h2>
+
+    <p>
+      This request was rejected by the technician and is now closed.
+    </p>
+
+    <div className="rejected-reason">
+      <strong>Rejection Reason:</strong>
+
+      <span>
+        {request.rejectionReason ||
+          "No rejection reason was provided."}
+      </span>
+    </div>
+  </section>
+)}
+      
 
       <header className="one-request-heading">
         <p>Support Request</p>
@@ -128,6 +148,7 @@ function OneRequest() {
           <span className="heading-status">Request no. {request.requestNumber}</span>
         </div>
       </header>
+      
 
       <div className="request-page-layout">
         <div className="request-main-column">

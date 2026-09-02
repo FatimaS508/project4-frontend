@@ -218,6 +218,8 @@ http://localhost:5173
 - As a technician, I can view the employee ID and department.
 - As a technician, I can view and preview employee attachments.
 - As a technician, I can view requests grouped by category and subcategory.
+- As a technician, I can reject the requested issue and write the reason of rejection
+
 
 ## Future Enhancements
 

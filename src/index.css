@@ -1359,6 +1359,18 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.attachment-preview {
+  display: block;
+  width: 200px;
+  height: 150px;
+  margin-top: 10px;
+
+  object-fit: contain;
+
+  background-color: #ffffff;
+  border: 2px solid #67191f;
+  border-radius: 8px;
+}
 
 .request-field .file-upload-input {
   position: absolute;
@@ -2004,6 +2016,60 @@ body {
 .resolvedIssue{
   font-size: 20px;
 
+}
+.rejected-request-notice {
+  width: 100%;
+  max-width: 980px;
+  margin: 25px auto 35px;
+  padding: 24px 28px;
+  box-sizing: border-box;
+  background-color: #f1ddbd;
+  border: 2px solid #741820;
+  border-radius: 16px;
+  box-shadow: 8px 8px 0 #171717;
+  color: #741820;
+}
+
+.rejected-request-notice h2 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  color: #9e2018;
+}
+
+.rejected-request-notice > p {
+  margin: 0 0 18px;
+  color: #171717;
+  font-size: 16px;
+}
+
+.rejected-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px 18px;
+  background-color: #ffffff;
+  border: 1px solid #741820;
+  border-radius: 10px;
+}
+
+.rejected-reason strong {
+  flex-shrink: 0;
+  color: #741820;
+}
+
+.rejected-reason span {
+  color: #171717;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .rejected-request-notice {
+    padding: 20px;
+  }
+
+  .rejected-reason {
+    flex-direction: column;
+  }
 }
 .request-details-heading {
   margin-bottom: 22px;
@@ -4593,7 +4659,38 @@ body {
   padding-top: 20px;
   border-top: 2px solid #d1ad91;
 }
+.reject-request-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #7c1921;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
+.reject-request-section textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #7c1921;
+  border-radius: 8px;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.reject-request-button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #b42318;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.reject-request-button:hover {
+  background-color: #8f1c13;
+}
 .technician-request-attachments h3 {
   margin: 0 0 15px;
   color: #67191f;

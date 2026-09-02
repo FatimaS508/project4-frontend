@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router"
 import toast from "react-hot-toast"
 
 import { useAuth } from "../context/AuthContext"
-import {getOneRequest,addReply,deleteReply} from "../services/requests"
+import {getOneRequest,addReply,deleteReply, updateRequestStatus} from "../services/requests"
 
 
 function ReplyTechnician() {
@@ -18,7 +18,8 @@ function ReplyTechnician() {
   const [sending, setSending] = useState(false)
   const [deletingReplyId, setDeletingReplyId] = useState(null)
   const [error, setError] = useState("")
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null)
+  const [rejectionReason, setRejectionReason] = useState("");
 
   async function loadRequest() {
     try {
@@ -74,6 +75,28 @@ async function handleSubmit(event) {
     )
   } finally {
     setSending(false)
+  }
+}
+async function handleRejectRequest() {
+  if (!rejectionReason.trim()) {
+    toast.error("Please enter a rejection reason");
+    return;
+  }
+
+  try {
+    const updatedRequest = await updateRequestStatus(
+      requestId,
+      "Rejected",
+      rejectionReason
+    );
+
+    setRequest(updatedRequest);
+    setRejectionReason("");
+
+    toast.success("Request rejected successfully");
+  } catch (err) {
+    console.log(err);
+    toast.error("Failed to reject the request");
   }
 }
 
@@ -315,9 +338,32 @@ async function handleSubmit(event) {
                 </svg>
               )}
             </button>
+            <div className="reject-request-section">
+  <label htmlFor="rejectionReason">
+    Rejection Reason
+  </label>
+
+  <textarea
+    id="rejectionReason"
+    value={rejectionReason}
+    onChange={(event) =>
+      setRejectionReason(event.target.value)
+    }
+    placeholder="Explain why this request was rejected"
+    rows="3"
+  />
+
+  <button
+    type="button"
+    className="reject-request-button"
+    onClick={handleRejectRequest}
+  >
+    Reject Request
+  </button>
+</div>
           </form>
         </section>
-      </div>
+      
 
       <section className="technician-replies-section">
         <div className="replies-title-row">
@@ -403,6 +449,7 @@ async function handleSubmit(event) {
           </div>
         </div>
       )}
+      </div>
     </main>
   )
 }

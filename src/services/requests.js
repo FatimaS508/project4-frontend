@@ -19,8 +19,8 @@ async function addReply(requestId, replyData){
     const response= await api.post(`/requests/${requestId}/replies`,replyData)
     return response.data
 }
-async function updateRequestStatus(requestId, status) {
-    const response = await api.put(`/requests/${requestId}`, { status })
+async function updateRequestStatus(requestId, status , rejectionReason = "") {
+    const response = await api.put(`/requests/${requestId}/status`, { status , rejectionReason})
     return response.data
 }
 async function deleteReply(requestId, replyId){

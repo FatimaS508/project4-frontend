@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { getOneSubcategory } from "../services/category";
-import {
-  getOneRequest,
-  updateRequest
-} from "../services/requests";
+import { getOneRequest, updateRequest} from "../services/requests";
 import toast from "react-hot-toast";
 
 function EditRequest() {
@@ -13,14 +10,14 @@ function EditRequest() {
 
   const [request, setRequest] = useState(null);
   const [subcategory, setSubcategory] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  
 
   const [formData, setFormData] = useState({
     priority: "Medium",
     requestDetails: {},
-    attachments: []
+    attachments: {}
   });
 
   async function loadRequest() {
@@ -49,10 +46,24 @@ function EditRequest() {
 
       setSubcategory(subcategoryResponse.scategory);
 
+      const fileFields = subcategoryResponse.scategory.formFields?.filter((field) => field.type === "file") || [];
+
+      const savedAttachments = {};
+
+      fileFields.forEach((field, index) => {
+        const currentImage = currentRequest.attachments?.[index];
+
+        if (currentImage) {
+          savedAttachments[field.label] = {
+            fileName: "Current image attached",
+            image: currentImage,
+          }}
+      })
+
       setFormData({
         priority: currentRequest.priority || "Medium",
         requestDetails: currentRequest.requestDetails || {},
-         attachments: currentRequest.attachments || []
+        attachments: savedAttachments,
       });
     } catch (err) {
       console.log(err);
@@ -75,34 +86,45 @@ function EditRequest() {
   }
 
  function handleFieldChange(event, fieldLabel) {
-  const { value, type, files } = event.target
+  const { value, type, files } = event.target;
 
-  if (type === "file") {const selectedFile = files[0];
+  if (type === "file") {
+    const selectedFile = files[0];
 
-    if (!selectedFile) {return;}
+    if (!selectedFile) {
+      return;
+    }
 
     if (selectedFile.size > 2 * 1024 * 1024) {
-      toast.error("Image must be smaller than 2 MB")
-      event.target.value = ""
-      return;}
+      toast.error("Image must be smaller than 2 MB");
+      event.target.value = "";
+      return;
+    }
 
-    const reader = new FileReader()
+    const reader = new FileReader();
 
-    reader.onloadend = () => {setFormData((currentData) => ({...currentData,
-        attachments: [reader.result]
+    reader.onloadend = () => {
+      setFormData((currentData) => ({
+        ...currentData,
+
+        attachments: {...currentData.attachments,
+
+          [fieldLabel]: {
+            fileName: selectedFile.name,
+            image: reader.result,
+          },},
       }))
-
-      setSelectedFileName(selectedFile.name)}
+    };
 
     reader.readAsDataURL(selectedFile)
-    return;
+    return
   }
 
-  setFormData((currentData) => ({...currentData,requestDetails: {
-      ...currentData.requestDetails,
-      [fieldLabel]: value
-    }}))
-}
+  setFormData((currentData) => ({...currentData,
+    requestDetails: {...currentData.requestDetails,
+      [fieldLabel]: value,
+    },
+  }))}
 
   function getFieldValue(fieldLabel) {const detail = formData.requestDetails[fieldLabel];
 
@@ -125,7 +147,8 @@ function EditRequest() {
       const requestBody = {
         priority: formData.priority,
         requestDetails: formData.requestDetails,
-        attachments: formData.attachments
+        attachments: Object.values(formData.attachments).map(
+          (attachment) => attachment.image)
       };
 
       await updateRequest(requestId, requestBody);
@@ -290,62 +313,58 @@ function EditRequest() {
                   required={field.required}
                   rows="5"
                 />
-              ) : field.type === "file" ? (
-                <label
-                  className="file-upload-box"
-                  htmlFor={field.name}
-                >
-                                  <span className="selected-file-name">
-                                      {selectedFileName ||
-                                          (formData.attachments.length > 0
-                                              ? "Current image attached"
-                                              : "No image selected")}
-                                  </span>
-                  <svg
-                    className="upload-icon"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
+                ) : field.type === "file" ? (
+                  <label
+                    className="file-upload-box"
+                    htmlFor={field.name}
                   >
-                    <path d="M7 18a5 5 0 0 1-.6-9.97A7 7 0 0 1 20 10a4 4 0 0 1 0 8H7Z" />
-                    <path d="m9 12 3-3 3 3" />
-                    <path d="M12 9v7" />
-                  </svg>
+                    <svg
+                      className="upload-icon"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path d="M7 18a5 5 0 0 1-.6-9.97A7 7 0 0 1 20 10a4 4 0 0 1 0 8H7Z" />
+                      <path d="m9 12 3-3 3 3" />
+                      <path d="M12 9v7" />
+                    </svg>
 
-                  <span className="upload-title">
-                    Replace the image
-                  </span>
+                    <span className="upload-title">
+                      Replace the image
+                    </span>
 
-                  <span className="upload-description">
-                    Click here to select a new image
-                  </span>
+                    <span className="upload-description">
+                      Click here to select a new image
+                    </span>
 
-                  <span className="selected-file-name">
-                    {formData.requestDetails[field.label]
-                      ?.name ||
-                      (formData.requestDetails[field.label]
-                        ? "Current image attached"
-                        : "No image selected")}
-                  </span>
+                    <span className="selected-file-name">
+                      {formData.attachments[field.label]?.fileName ||
+                        "No image selected"}
+                    </span>
 
-                  <input
-                    className="file-upload-input"
-                    id={field.name}
-                    name={field.name}
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) =>
-                      handleFieldChange(
-                        event,
-                        field.label
-                      )
-                    }
-                    required={
-                      field.required &&
-                      !formData.requestDetails[field.label]
-                    }
-                  />
-                </label>
-              ) : (
+                    {formData.attachments[field.label]?.image && (
+                      <img
+                        className="attachment-preview"
+                        src={formData.attachments[field.label].image}
+                        alt={`${field.label} preview`}
+                      />
+                    )}
+
+                    <input
+                      className="file-upload-input"
+                      id={field.name}
+                      name={field.name}
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) =>
+                        handleFieldChange(event, field.label)
+                      }
+                      required={
+                        field.required &&
+                        !formData.attachments[field.label]
+                      }
+                    />
+                  </label>
+                ) : (
                 <input
                   id={field.name}
                   name={field.name}
